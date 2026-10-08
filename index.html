@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffe4ec">
+<title>Para mi chiquilla</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ Escribe aquí el mensaje por defecto de la carta
+  const MENSAJE_POR_DEFECTO =
+`Hola mi amor 💗
+
+Snoopy y yo te trajimos esta carta para recordarte lo mucho que te quiero.
+
+Gracias por cada sonrisa, cada abrazo y cada momento juntos.
+
+Con todo mi corazón,
+Yo 🐶`;
+</script>
+<style>
+  :root {
+    --bg1: #ffe4ec;
+    --bg2: #ffd1dc;
+    --heart1: #ff5c8a;
+    --heart2: #e8174f;
+    --heart-stroke: #c9003a;
+    --paper: #fffaf3;
+    --ink: #4a2b33;
+    --accent: #e8174f;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    font-family: "Quicksand", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 50% 30%, var(--bg1), var(--bg2));
+    color: var(--ink);
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+  }
+
+  /* Corazoncitos flotando de fondo */
+  .floaters { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .floaters span {
+    position: absolute; bottom: -40px;
+    color: var(--heart1); opacity: .55;
+    animation: subir linear infinite;
+  }
+  @keyframes subir {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 0; }
+    10%  { opacity: .6; }
+    100% { transform: translateY(-115vh) rotate(25deg); opacity: 0; }
+  }
+
+  h1 {
+    font-family: "Caveat", cursive;
+    font-size: clamp(2rem, 7vw, 3rem);
+    color: var(--accent);
+    margin: 0 0 4px;
+    text-align: center;
+    z-index: 1;
+    opacity: 0;
+    animation: aparecer 1s ease 0.3s forwards;
+  }
+
+  .stage {
+    position: relative;
+    width: min(92vw, 480px);
+    z-index: 1;
+  }
+  .stage svg { width: 100%; height: auto; display: block; overflow: visible; }
+
+  /* 1) El corazón se dibuja */
+  #heartOutline {
+    fill: none;
+    stroke: var(--heart-stroke);
+    stroke-width: 6;
+    stroke-linejoin: round;
+    stroke-dasharray: 1200;
+    stroke-dashoffset: 1200;
+    animation: dibujar 2.2s ease-in-out forwards;
+  }
+  @keyframes dibujar { to { stroke-dashoffset: 0; } }
+
+  /* 2) Se rellena y late */
+  #heartFill {
+    opacity: 0;
+    animation: aparecer .8s ease 2s forwards;
+  }
+  #heartGroup {
+    transform-origin: 200px 190px;
+    animation: latido 1.6s ease-in-out 2.8s infinite;
+  }
+  @keyframes latido {
+    0%, 100% { transform: scale(1); }
+    15% { transform: scale(1.04); }
+    30% { transform: scale(.99); }
+    45% { transform: scale(1.03); }
+  }
+  @keyframes aparecer { to { opacity: 1; } }
+
+  /* 3) Snoopy entra caminando */
+  #snoopyWalk {
+    transform: translateX(-320px);
+    animation: entrar 2s cubic-bezier(.3,1.3,.5,1) 2.8s forwards;
+  }
+  @keyframes entrar { to { transform: translateX(0); } }
+  #snoopyBob {
+    animation: rebote .35s ease-in-out 2.8s 6 alternate;
+  }
+  @keyframes rebote { to { transform: translateY(-6px); } }
+
+  /* 4) Levanta el brazo con la carta */
+  #arm {
+    transform-origin: 110px 126px;
+    transform: rotate(35deg);
+    animation: levantar .7s ease-out 5s forwards;
+  }
+  @keyframes levantar { to { transform: rotate(0deg); } }
+
+  #letter {
+    transform-origin: 174px 103px;
+    animation: menear 1.2s ease-in-out 5.8s infinite;
+  }
+  @keyframes menear {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(-7deg); }
+    75% { transform: rotate(7deg); }
+  }
+
+  #blink { animation: parpadeo 4s infinite 3s; transform-origin: 132px 50px; }
+  @keyframes parpadeo { 0%, 94%, 100% { transform: scaleY(1); } 97% { transform: scaleY(.1); } }
+
+  #tail { transform-origin: 76px 158px; animation: cola .4s ease-in-out infinite alternate; }
+  @keyframes cola { from { transform: rotate(-10deg); } to { transform: rotate(15deg); } }
+
+  .mini-heart { opacity: 0; }
+  .ready .mini-heart { animation: miniCorazon 2.4s ease-out infinite; }
+  .ready .mini-heart:nth-of-type(2) { animation-delay: .8s; }
+  .ready .mini-heart:nth-of-type(3) { animation-delay: 1.6s; }
+  @keyframes miniCorazon {
+    0% { opacity: 0; transform: translateY(0) scale(.6); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-50px) scale(1.1); }
+  }
+
+  .stage.ready svg { cursor: pointer; }
+
+  .hint {
+    font-family: "Caveat", cursive;
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
+    color: var(--accent);
+    text-align: center;
+    margin-top: 8px;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity .6s;
+    min-height: 2.2em;
+  }
+  .ready ~ .hint { opacity: 1; animation: pulso 1.4s ease-in-out infinite; }
+  @keyframes pulso { 50% { transform: scale(1.06); } }
+
+  /* ===== Carta abierta ===== */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(74, 20, 40, .45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .4s;
+    z-index: 10;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+
+  .paper {
+    position: relative;
+    width: min(100%, 460px);
+    max-height: 85vh;
+    max-height: 85dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    background:
+      repeating-linear-gradient(to bottom, transparent 0 33px, #f3d6dd 33px 34px),
+      var(--paper);
+    border-radius: 14px;
+    padding: 34px 26px 26px 46px;
+    box-shadow: 0 20px 50px rgba(120, 0, 40, .35);
+    transform: translateY(40px) scale(.6) rotate(-6deg);
+    transition: transform .6s cubic-bezier(.2,1.4,.4,1);
+  }
+  .paper::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 32px;
+    width: 2px; background: #ffb3c6;
+  }
+  .overlay.open .paper { transform: none; }
+
+  .paper .msg {
+    font-family: "Caveat", cursive;
+    font-size: clamp(1.35rem, 5vw, 1.6rem);
+    line-height: 34px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    color: var(--ink);
+  }
+  .close {
+    position: absolute; top: 8px; right: 10px;
+    border: 0; background: none; font-size: 1.6rem;
+    color: var(--accent); cursor: pointer; line-height: 1;
+    padding: 6px;
+  }
+  .seal { text-align: right; font-size: 2rem; margin-top: 8px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="floaters" id="floaters" aria-hidden="true"></div>
+
+<h1>Tengo algo para ti</h1>
+
+<div class="stage" id="stage">
+  <svg viewBox="0 0 400 360" role="img" aria-label="Un corazón con Snoopy entregando una carta">
+    <defs>
+      <linearGradient id="gradHeart" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--heart1)"/>
+        <stop offset="1" stop-color="var(--heart2)"/>
+      </linearGradient>
+      <radialGradient id="shine" cx=".35" cy=".25" r=".6">
+        <stop offset="0" stop-color="#fff" stop-opacity=".45"/>
+        <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+      </radialGradient>
+      <clipPath id="heartClip">
+        <path id="heartShape" d="M200 335 C 80 258, 12 190, 30 112 C 45 52, 122 32, 172 72 C 186 84, 195 96, 200 106 C 205 96, 214 84, 228 72 C 278 32, 355 52, 370 112 C 388 190, 320 258, 200 335 Z"/>
+      </clipPath>
+    </defs>
+
+    <g id="heartGroup">
+      <g id="heartFill">
+        <use href="#heartShape" fill="url(#gradHeart)"/>
+        <use href="#heartShape" fill="url(#shine)"/>
+      </g>
+
+      <!-- Todo lo de adentro queda recortado por el corazón -->
+      <g clip-path="url(#heartClip)">
+        <!-- piso -->
+        <ellipse cx="200" cy="300" rx="150" ry="22" fill="#fff" opacity=".18"/>
+
+        <g id="snoopyWalk">
+          <g transform="translate(108 102) scale(.82)">
+            <g id="snoopyBob">
+              <defs>
+                <linearGradient id="fur" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#ffffff"/>
+                  <stop offset="1" stop-color="#ece8f1"/>
+                </linearGradient>
+                <linearGradient id="earGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#3a3a40"/>
+                  <stop offset="1" stop-color="#111114"/>
+                </linearGradient>
+              </defs>
+
+              <!-- sombra en el piso -->
+              <ellipse cx="108" cy="190" rx="58" ry="6" fill="#000" opacity=".15"/>
+
+              <!-- cola -->
+              <g id="tail">
+                <path d="M76 158 C62 156 56 144 62 134" fill="none" stroke="#1d1d1f" stroke-width="9" stroke-linecap="round"/>
+                <path d="M76 158 C62 156 56 144 62 134" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+              </g>
+
+              <!-- cuerpo -->
+              <path d="M86 100 C70 122 64 152 72 178 L140 178 C146 150 138 120 122 98 Z" fill="url(#fur)" stroke="#1d1d1f" stroke-width="3" stroke-linejoin="round"/>
+              <!-- pancita / pierna delantera -->
+              <path d="M118 176 C120 160 128 150 138 148" fill="none" stroke="#1d1d1f" stroke-width="2.5" stroke-linecap="round"/>
+
+              <!-- pies -->
+              <ellipse cx="86" cy="181" rx="20" ry="8" fill="url(#fur)" stroke="#1d1d1f" stroke-width="3"/>
+              <ellipse cx="131" cy="182" rx="23" ry="8.5" fill="url(#fur)" stroke="#1d1d1f" stroke-width="3"/>
+              <path d="M144 177 q2 4 0 8 M137 177 q2 4 0 8" fill="none" stroke="#1d1d1f" stroke-width="1.8" stroke-linecap="round"/>
+
+              <!-- collar -->
+              <path d="M84 102 Q103 113 124 100" fill="none" stroke="#e8174f" stroke-width="6" stroke-linecap="round"/>
+              <circle cx="104" cy="110" r="3.5" fill="#ffc83d" stroke="#1d1d1f" stroke-width="1.5"/>
+
+              <!-- cabeza -->
+              <path d="M70 70 C66 40 92 26 118 32 C140 37 160 40 178 44 C196 48 198 72 180 76 C160 80 140 82 126 90 C116 104 90 108 78 98 C70 92 70 82 70 70 Z"
+                    fill="url(#fur)" stroke="#1d1d1f" stroke-width="3" stroke-linejoin="round"/>
+              <!-- nariz -->
+              <ellipse cx="185" cy="51" rx="10" ry="8" fill="#1d1d1f" transform="rotate(-12 185 51)"/>
+              <ellipse cx="182" cy="48" rx="3" ry="2" fill="#fff" opacity=".55"/>
+              <!-- ceja y ojo -->
+              <path d="M124 39 Q131 34 139 37" fill="none" stroke="#1d1d1f" stroke-width="2.5" stroke-linecap="round"/>
+              <ellipse id="blink" cx="132" cy="50" rx="2.8" ry="5.5" fill="#1d1d1f"/>
+              <!-- cachete -->
+              <ellipse cx="142" cy="66" rx="8" ry="4.5" fill="#ff9db5" opacity=".75"/>
+              <!-- sonrisa -->
+              <path d="M152 71 Q166 78 181 70" fill="none" stroke="#1d1d1f" stroke-width="2.6" stroke-linecap="round"/>
+              <path d="M151 67 Q149 71 153 74" fill="none" stroke="#1d1d1f" stroke-width="2.2" stroke-linecap="round"/>
+
+              <!-- oreja -->
+              <path d="M98 36 C78 30 62 50 62 76 C62 100 68 116 82 116 C96 116 100 100 98 84 C96 66 108 46 98 36 Z" fill="url(#earGrad)"/>
+              <path d="M76 58 C71 72 71 88 75 102" fill="none" stroke="#6b6b75" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+
+              <!-- brazo con la carta -->
+              <g id="arm">
+                <path d="M110 126 C126 122 144 118 156 116" fill="none" stroke="#1d1d1f" stroke-width="14" stroke-linecap="round"/>
+                <path d="M110 126 C126 122 144 118 156 116" fill="none" stroke="#fff" stroke-width="8" stroke-linecap="round"/>
+                <g id="letter">
+                  <rect x="150" y="86" width="48" height="34" rx="4" fill="#fffaf3" stroke="#c9003a" stroke-width="2.5" transform="rotate(-6 174 103)"/>
+                  <path d="M150 88 L174 106 L198 88" fill="none" stroke="#c9003a" stroke-width="2.5" stroke-linejoin="round" transform="rotate(-6 174 103)"/>
+                  <path d="M174 109 c-3-4 -9-2 -7 3 c1 3 7 6 7 6 c0 0 6-3 7-6 c2-5 -4-7 -7-3 z" fill="#e8174f"/>
+                </g>
+                <circle cx="156" cy="116" r="7.5" fill="#fff" stroke="#1d1d1f" stroke-width="3"/>
+              </g>
+
+              <!-- corazoncitos que salen -->
+              <text class="mini-heart" x="186" y="90" font-size="16">💗</text>
+              <text class="mini-heart" x="200" y="80" font-size="12">💕</text>
+              <text class="mini-heart" x="172" y="84" font-size="14">💖</text>
+            </g>
+          </g>
+        </g>
+      </g>
+
+      <path id="heartOutline" d="M200 335 C 80 258, 12 190, 30 112 C 45 52, 122 32, 172 72 C 186 84, 195 96, 200 106 C 205 96, 214 84, 228 72 C 278 32, 355 52, 370 112 C 388 190, 320 258, 200 335 Z"/>
+    </g>
+  </svg>
+</div>
+<div class="hint" id="hint">Toca la carta 💌</div>
+
+<!-- Carta abierta -->
+<div class="overlay" id="letterOverlay" role="dialog" aria-modal="true" aria-label="Carta">
+  <div class="paper">
+    <button class="close" id="closeLetter" aria-label="Cerrar">×</button>
+    <p class="msg" id="msg"></p>
+    <div class="seal">🐶💌</div>
+  </div>
+</div>
+
+<script>
+  // ---------- Corazoncitos de fondo ----------
+  const floaters = document.getElementById('floaters');
+  const emojis = ['❤', '💕', '💗', '♥'];
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('span');
+    s.textContent = emojis[i % emojis.length];
+    s.style.left = Math.random() * 100 + 'vw';
+    s.style.fontSize = (12 + Math.random() * 20) + 'px';
+    s.style.animationDuration = (7 + Math.random() * 8) + 's';
+    s.style.animationDelay = (Math.random() * 10) + 's';
+    floaters.appendChild(s);
+  }
+
+  // ---------- Mensaje ----------
+  // Toma el mensaje del enlace (#m=...) si viene, si no usa MENSAJE_POR_DEFECTO
+  const mensaje = new URLSearchParams(location.hash.slice(1)).get('m') || MENSAJE_POR_DEFECTO;
+  const msgEl = document.getElementById('msg');
+  msgEl.textContent = mensaje;
+
+  // ---------- Animación lista ----------
+  const stage = document.getElementById('stage');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(() => stage.classList.add('ready'), reduce ? 0 : 5700);
+
+  // ---------- Abrir / cerrar carta ----------
+  const letterOverlay = document.getElementById('letterOverlay');
+  stage.addEventListener('click', () => {
+    if (!stage.classList.contains('ready')) return;
+    msgEl.textContent = mensaje;
+    letterOverlay.classList.add('open');
+  });
+  document.getElementById('closeLetter').addEventListener('click', () => letterOverlay.classList.remove('open'));
+  letterOverlay.addEventListener('click', e => { if (e.target === letterOverlay) letterOverlay.classList.remove('open'); });
+</script>
+</body>
+</html>
