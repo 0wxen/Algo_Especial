@@ -20,6 +20,10 @@
     'Gol 4: Estoy muy orgulloso de todo lo que logras.',
     'Gol 5: Ya quiero que sea diciembre para verte 💗',
   ];
+  // Dificultad: probabilidad de que el portero adivine y la ataje (0 = nunca, 1 = siempre)
+  const PROB_ATAJAR = 0.68;
+  // Para que no se frustre: después de este número de atajadas seguidas, el siguiente tiro entra seguro
+  const MAX_ATAJADAS_SEGUIDAS = 4;
   const MENSAJE_FINAL = '¡5 de 5! Campeona absoluta… y la dueña de mi portería 🏆⚽';
   // -------------------------------------------------------------------
 </script>
@@ -167,19 +171,38 @@
     gol.classList.remove('show');
   }
 
+  let seguidas = 0;
+  const FRASES_ATAJADA = [
+    '¡Uy! El portero adivinó. Inténtalo otra vez 😅',
+    '¡Qué atajada! Pero tú puedes 💪',
+    'Casi… cambia de lado y vuelve a tirar ⚽',
+    'El portero está inspirado hoy. ¡Otra vez!',
+  ];
   function tirar(dir) {
     if (goles >= MENSAJES.length) return;
     botones.forEach(b => b.disabled = true);
-    // El portero siempre se lanza hacia otro lado 😉
+    // ¿El portero adivina? (si ya atajó varias seguidas, esta vez entra seguro)
+    const ataja = seguidas < MAX_ATAJADAS_SEGUIDAS && Math.random() < PROB_ATAJAR;
     const opciones = [0, 1, 2].filter(d => d !== dir);
-    const kd = opciones[Math.floor(Math.random() * opciones.length)];
+    const kd = ataja ? dir : opciones[Math.floor(Math.random() * opciones.length)];
     keeper.style.left = X[kd] + '%';
     keeper.className.baseVal = 'keeper' + (kd === 0 ? ' diveL' : kd === 2 ? ' diveR' : '');
     ball.classList.add('shot');
     ball.style.left = X[dir] + '%';
-    ball.style.top = (dir === 1 ? 16 : 20) + '%';
+    ball.style.top = ataja ? '30%' : (dir === 1 ? 16 : 20) + '%';
 
     setTimeout(() => {
+      if (ataja) {
+        seguidas++;
+        gol.textContent = '¡ATAJADA! 🧤';
+        gol.classList.add('show');
+        ball.style.top = '52%';   // rebote
+        mostrar('LA ATAJÓ', FRASES_ATAJADA[Math.floor(Math.random() * FRASES_ATAJADA.length)]);
+        setTimeout(() => { reset(); botones.forEach(b => b.disabled = false); }, 1500);
+        return;
+      }
+      seguidas = 0;
+      gol.textContent = '¡GOOOL!';
       gol.classList.add('show');
       marcas[goles].classList.add('ok');
       mostrar('GOL ' + (goles + 1) + ' DE ' + MENSAJES.length, MENSAJES[goles].replace(/^Gol \d+:\s*/, ''));
@@ -195,6 +218,7 @@
       }, 1600);
     }, 600);
   }
+
 
   botones.forEach(b => b.addEventListener('click', () => tirar(+b.dataset.dir)));
 </script>
