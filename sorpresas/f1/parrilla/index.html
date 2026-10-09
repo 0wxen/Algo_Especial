@@ -14,6 +14,7 @@
   const FIRMA = 'Owen';
   // De P1 a la última posición. corta: lo que se ve en la tabla. larga: lo que sale al tocarla.
   const RAZONES = [
+    { corta: 'Sus ojos',              larga: 'Me pierdo cada vez que me miras. Son de mis cosas favoritas del mundo 👀💗' },
     { corta: 'Su sonrisa',            larga: 'Es lo primero que me viene a la mente cuando pienso en ti.' },
     { corta: 'Lo inteligente que es', larga: 'Estudiar odontología no es cualquier cosa, y tú lo haces increíble.' },
     { corta: 'Su paciencia',          larga: 'Por aguantar mis cambios de humor y mis locuras 😅' },
@@ -23,8 +24,9 @@
     { corta: 'Que se anime a la F1',  larga: 'Aunque sea por mí. Eso dice mucho de ti 🏎️' },
     { corta: 'Su buen gusto musical', larga: 'The Weeknd siempre va a sonar distinto gracias a ti 🎤' },
     { corta: 'Las llamadas largas',   larga: 'El tiempo se pasa volando cuando hablamos.' },
-    { corta: 'Que es ella',           larga: 'Así, tal cual. No le cambiaría nada.' },
   ];
+  // Tiempos estilo clasificación real (tipo Mónaco, Q3): P1 lleva su vuelta y los demás la diferencia.
+  const TIEMPOS = ['1:10.270', '+0.154', '+0.248', '+0.272', '+0.273', '+0.342', '+0.348', '+0.677', '+0.786', '+0.843'];
   // -------------------------------------------------------------------
 </script>
 <style>
@@ -57,13 +59,13 @@
   .head small { font-weight: 700; letter-spacing: .2em; font-size: .72rem; opacity: .9; }
   .head h1 { margin: 0; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: clamp(1.3rem, 5.5vw, 1.7rem); line-height: 1.1; }
   .cols {
-    display: grid; grid-template-columns: 44px 1fr 80px; gap: 8px;
+    display: grid; grid-template-columns: 44px 1fr 84px; gap: 8px;
     background: #22262f; padding: 6px 12px; font-size: .7rem; font-weight: 700; letter-spacing: .12em; color: var(--muted);
   }
 
   .row {
     width: 100%; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer;
-    display: grid; grid-template-columns: 44px 1fr 80px; gap: 8px; align-items: center;
+    display: grid; grid-template-columns: 44px 1fr 84px; gap: 8px; align-items: center;
     padding: 12px; background: var(--row);
     border-left: 4px solid var(--team, var(--muted));
     opacity: 0; transform: translateX(-20px);
@@ -106,7 +108,7 @@
     <small>CLASIFICACIÓN OFICIAL</small>
     <h1>Razones por las que me encantas</h1>
   </div>
-  <div class="cols"><span>POS</span><span>RAZÓN</span><span style="text-align:right">INTERVALO</span></div>
+  <div class="cols"><span>POS</span><span>RAZÓN</span><span style="text-align:right">TIEMPO</span></div>
   <div id="tabla"></div>
   <p class="hint">Toca una posición para ver más</p>
   <div class="pole" id="pole">
@@ -128,7 +130,7 @@
     row.innerHTML = '<span class="pos"></span><span class="name"></span><span class="gap"></span>';
     row.querySelector('.pos').textContent = 'P' + (i + 1);
     row.querySelector('.name').textContent = r.corta;
-    row.querySelector('.gap').textContent = i === 0 ? 'LÍDER' : '+0.00' + i;
+    row.querySelector('.gap').textContent = TIEMPOS[i] || '';
     const det = document.createElement('div');
     det.className = 'detail';
     det.innerHTML = '<div><p></p></div>';

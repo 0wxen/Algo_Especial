@@ -12,27 +12,105 @@
   // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
-  // Cada carta: cuándo abrirla, un emoji y lo que dice adentro.
-  // Puedes usar `comillas invertidas` en el texto para poder dar Enter (saltos de línea).
+  // Cada carta: cuándo abrirla, un emoji y VARIOS mensajes.
+  // Cada vez que la abre le sale el siguiente mensaje de su lista, sin repetir.
+  // Puedes usar `comillas invertidas` para poder dar Enter (saltos de línea). Agrega los que quieras.
   const CARTAS = [
-    { cuando: 'estés triste', emoji: '🌧️', texto: `Oye, está bien no estar bien.
+    { cuando: 'estés triste', emoji: '🌧️', textos: [
+`Oye, está bien no estar bien.
 Pero quiero que sepas que no estás sola: aquí estoy, aunque sea lejos.
-Llámame si quieres, aunque sea para no decir nada.` },
-    { cuando: 'me extrañes', emoji: '💭', texto: `Yo también te extraño. Probablemente justo ahorita.
-Cierra los ojos y piensa que falta menos para diciembre.` },
-    { cuando: 'no puedas dormir', emoji: '🌙', texto: `Pon una canción de The Weeknd bajito, respira hondo
+Llámame si quieres, aunque sea para no decir nada.`,
+`Los días grises también se acaban.
+Mientras tanto, tápate con tu cobija favorita y mándame un mensaje. Aquí estoy 💗`,
+`No tienes que estar bien todo el tiempo.
+Llora si lo necesitas, y luego acuérdate de lo increíble que eres.`,
+`Si pudiera, ahorita mismo te daría el abrazo más largo del mundo.
+Guárdalo, que en diciembre te lo cobro doble 🤗`,
+`Eres mucho más fuerte de lo que crees.
+Y aunque hoy no lo sientas, yo sí lo veo.`,
+    ]},
+    { cuando: 'me extrañes', emoji: '💭', textos: [
+`Yo también te extraño. Probablemente justo ahorita.
+Cierra los ojos y piensa que falta menos para diciembre.`,
+`Mándame un mensaje que diga "te extraño".
+Te apuesto a que te contesto más rápido que un pit stop 🏎️`,
+`Extrañarte es la prueba de lo bonito que es tenerte.
+Ya falta menos, te lo prometo.`,
+`Pon "Die For You" y piensa que, del otro lado, alguien está pensando en ti 🎤`,
+`Mira la luna esta noche. Es la misma que voy a estar viendo yo 🌙`,
+    ]},
+    { cuando: 'no puedas dormir', emoji: '🌙', textos: [
+`Pon una canción de The Weeknd bajito, respira hondo
 y piensa en algo bonito… como nosotros en diciembre.
-Buenas noches, bonita.` },
-    { cuando: 'tengas examen', emoji: '📚', texto: `Tú puedes. Estudiaste, eres inteligente y vas a hacerlo increíble.
-Y si no sale perfecto, igual estoy orgulloso de ti. Mucha suerte, doctora 🦷` },
-    { cuando: 'estés feliz', emoji: '☀️', texto: `¡Me encanta! Cuéntamelo todo.
-Tu felicidad es de mis cosas favoritas.` },
-    { cuando: 'estés enojada conmigo', emoji: '😤', texto: `Perdón. De verdad.
-Respira, cómete algo rico y luego hablamos. Te quiero aunque estés enojada 😅` },
-    { cuando: 'necesites reírte', emoji: '😂', texto: `Imagina a Snoopy intentando entender la F1.
-"¿Por qué dan vueltas si ya saben dónde está la meta?" 🐶🏎️` },
-    { cuando: 'falte poco para vernos', emoji: '🎄', texto: `¡Ya casi! Ve pensando qué vale de Snoopy vas a canjear primero.
-Nos vemos muy pronto 💗` },
+Buenas noches, bonita.`,
+`Cuenta Snoopys saltando una cerca: uno, dos, tres… 🐶
+Para el número diez ya vas a estar soñando.`,
+`Deja el celular un ratito (después de leer esto 😅), respira lento
+y piensa en el lugar más tranquilo que conozcas.`,
+`Si sigues despierta, mándame un mensajito.
+Me gusta ser lo último que lees antes de dormir.`,
+`Mañana va a ser un buen día. Descansa, que te lo mereces.
+Dulces sueños, ${NOMBRE} 💤`,
+    ]},
+    { cuando: 'tengas examen', emoji: '📚', textos: [
+`Tú puedes. Estudiaste, eres inteligente y vas a hacerlo increíble.
+Y si no sale perfecto, igual estoy orgulloso de ti. Mucha suerte, doctora 🦷`,
+`Respira hondo antes de empezar y lee cada pregunta con calma.
+Tú sabes más de lo que crees.`,
+`Futura Dra. ${NOMBRE}: hoy es solo un paso más.
+Ve, brilla y luego me cuentas todo.`,
+`Un examen no define lo que vales.
+Pero igual vas a sacar una calificación increíble 😉`,
+`Toma agüita, desayuna algo y ve con toda la confianza.
+Snoopy y yo te estamos echando porras 📣🐶`,
+    ]},
+    { cuando: 'estés feliz', emoji: '☀️', textos: [
+`¡Me encanta! Cuéntamelo todo.
+Tu felicidad es de mis cosas favoritas.`,
+`¡Así me gusta verte!
+Guarda este momento en tu memoria y mándame una foto de esa sonrisa 📸`,
+`Qué bonito es saber que estás feliz.
+Que te dure todo el día (y toda la semana).`,
+`Ponle música a este momento: elige tu canción favorita y báilala 💃`,
+`Tu sonrisa le gana a cualquier día soleado ☀️
+Ojalá yo haya tenido algo que ver 😌`,
+    ]},
+    { cuando: 'estés enojada conmigo', emoji: '😤', textos: [
+`Perdón. De verdad.
+Respira, cómete algo rico y luego hablamos. Te quiero aunque estés enojada 😅`,
+`Sé que a veces soy difícil. Gracias por tenerme paciencia.
+Prometo escucharte y arreglarlo.`,
+`Tienes derecho a estar enojada.
+Cuando estés lista, aquí estoy para hablar (y para pedirte perdón otra vez).`,
+`Vale por ganar esta discusión sin decir nada.
+Úsalo ahorita si quieres 🏆`,
+`Aunque estemos enojados, seguimos siendo un equipo.
+Te quiero, incluso cuando frunces el ceño 😤💗`,
+    ]},
+    { cuando: 'necesites reírte', emoji: '😂', textos: [
+`Imagina a Snoopy intentando entender la F1.
+"¿Por qué dan vueltas si ya saben dónde está la meta?" 🐶🏎️`,
+`¿Qué le dijo un diente a otro diente?
+"¡Qué sonrisa más bonita tenemos!" 🦷 (perdón, era malísimo)`,
+`Acuérdate de la última vez que nos reímos hasta que nos dolió la panza.
+Ya te estás riendo, ¿verdad? 😂`,
+`Snoopy intentó cantar Blinding Lights.
+Los vecinos llamaron a la policía 🐶🎤🚓`,
+`¿Por qué el portero no se enamora?
+Porque siempre ataja los sentimientos ⚽ (ok, ya me voy)`,
+    ]},
+    { cuando: 'falte poco para vernos', emoji: '🎄', textos: [
+`¡Ya casi! Ve pensando qué vale de Snoopy vas a canjear primero.
+Nos vemos muy pronto 💗`,
+`Ya puedo contar los días con los dedos.
+Prepárate, que te voy a abrazar como si no hubiera mañana 🤗`,
+`Haz una lista de todo lo que quieres que hagamos.
+Yo ya tengo la mía (y es larguísima).`,
+`Los kilómetros entre nosotros están a punto de convertirse en cero.
+Qué emoción 🗺️💗`,
+`Cuenta regresiva activada: nervios, emoción y muchas ganas de verte.
+Nos vemos muy pronto, ${NOMBRE}.`,
+    ]},
   ];
   // -------------------------------------------------------------------
 </script>
@@ -77,6 +155,7 @@ Nos vemos muy pronto 💗` },
   }
   .overlay.open .letter { transform: none; }
   .letter .cuando { font-family: "Caveat", cursive; font-size: 1.5rem; color: var(--red); line-height: 34px; }
+  .letter .num { font-size: .72rem; font-weight: 700; letter-spacing: .08em; color: var(--muted); text-transform: uppercase; line-height: 1; margin-top: -10px; }
   .letter p { font-family: "Caveat", cursive; font-size: clamp(1.4rem, 5.4vw, 1.65rem); line-height: 34px; margin: 0; white-space: pre-line; }
   .letter .firma { text-align: right; font-family: "Caveat", cursive; font-size: 1.5rem; color: var(--red); line-height: 34px; margin-top: 8px; }
   .close { position: absolute; top: 6px; right: 10px; border: 0; background: none; font-size: 1.6rem; color: var(--muted); cursor: pointer; padding: 4px; }
@@ -93,6 +172,7 @@ Nos vemos muy pronto 💗` },
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Carta">
   <div class="letter">
     <button class="close" id="close" aria-label="Cerrar">×</button>
+    <div class="num" id="num"></div>
     <div class="cuando" id="cuando"></div>
     <p id="texto"></p>
     <div class="firma" id="firma"></div>
@@ -105,6 +185,9 @@ Nos vemos muy pronto 💗` },
   $('firma').textContent = 'Con cariño, ' + FIRMA;
   const KEY = 'abrir-cuando-abiertas';
   let abiertas = [];
+  const KEY_VISTOS = 'abrir-cuando-vistos';
+  let vistos = {};
+  try { vistos = JSON.parse(localStorage.getItem(KEY_VISTOS)) || {}; } catch (e) {}
   try { abiertas = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
 
   CARTAS.forEach((c, i) => {
@@ -115,7 +198,12 @@ Nos vemos muy pronto 💗` },
     b.querySelector('.lbl span').textContent = c.cuando;
     b.addEventListener('click', () => {
       $('cuando').textContent = 'Para cuando ' + c.cuando + ':';
-      $('texto').textContent = c.texto;
+      // Siguiente mensaje de esta carta (no se repiten; cuando se acaban, vuelven a empezar)
+      const k = vistos[i] || 0;
+      $('texto').textContent = c.textos[k % c.textos.length];
+      $('num').textContent = 'Mensaje ' + ((k % c.textos.length) + 1) + ' de ' + c.textos.length;
+      vistos[i] = k + 1;
+      try { localStorage.setItem(KEY_VISTOS, JSON.stringify(vistos)); } catch (e) {}
       $('overlay').classList.add('open');
       if (!abiertas.includes(i)) { abiertas.push(i); b.classList.add('opened'); try { localStorage.setItem(KEY, JSON.stringify(abiertas)); } catch (e) {} }
     });

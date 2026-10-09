@@ -12,16 +12,36 @@
   // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
+  const POR_RONDA = 5;   // canciones por ronda. Al terminar una ronda, la siguiente sale 24 horas después.
   // pista: emojis · opciones: 4 canciones · correcta: número de la buena (1, 2, 3 o 4)
   // mensaje: lo que le aparece cuando acierta
   const PREGUNTAS = [
+    // ---- Ronda 1 ----
     { pista: '🌃🚗💡', opciones: ['Starboy', 'Blinding Lights', 'Out of Time', 'Die For You'], correcta: 2, mensaje: 'Como tus ojos cuando te ríes ✨' },
     { pista: '⭐👦',   opciones: ['Starboy', 'Earned It', 'The Hills', 'Save Your Tears'], correcta: 1, mensaje: 'Tú eres mi estrella favorita ⭐' },
     { pista: '😢💧🙈', opciones: ['Call Out My Name', 'Less Than Zero', 'Save Your Tears', 'Sacrifice'], correcta: 3, mensaje: 'Nada de lágrimas, puras sonrisas contigo.' },
     { pista: '⏰⌛🏃', opciones: ['Out of Time', 'Is There Someone Else?', 'Starboy', 'Snowchild'], correcta: 1, mensaje: 'El tiempo vuela cuando hablamos.' },
     { pista: '📞🗣️💔', opciones: ['Die For You', 'Call Out My Name', 'Often', 'Wicked Games'], correcta: 2, mensaje: 'Aunque yo siempre te voy a contestar 📱💗' },
+    // ---- Ronda 2 ----
+    { pista: '🙅‍♂️✋😶', opciones: ['Heartless', 'Popular', 'Can’t Feel My Face', 'Faith'], correcta: 3, mensaje: 'Lo que sí siento es que te extraño mucho 💗' },
+    { pista: '⛰️🌄⛰️', opciones: ['The Hills', 'The Morning', 'Snowchild', 'Gasoline'], correcta: 1, mensaje: 'Subiría cualquier montaña para verte ⛰️' },
+    { pista: '🏅💵✅', opciones: ['Popular', 'Reminder', 'Often', 'Earned It'], correcta: 4, mensaje: 'Todo lo que logras te lo ganas tú solita. Te admiro mucho.' },
+    { pista: '👉👀💕', opciones: ['Secrets', 'In Your Eyes', 'Die For You', 'Sacrifice'], correcta: 2, mensaje: 'Tus ojos son de mis cosas favoritas 👀💗' },
+    { pista: '🫀🚫🖤', opciones: ['Faith', 'Wicked Games', 'Heartless', 'Often'], correcta: 3, mensaje: 'Pero tú tienes el corazón más bonito del mundo.' },
+    // ---- Ronda 3 ----
+    { pista: '🕛🌃🏙️', opciones: ['After Hours', 'The Morning', 'Party Monster', 'Snowchild'], correcta: 1, mensaje: 'Como nuestras llamadas que se alargan hasta tarde 🌙' },
+    { pista: '😮‍💨🫁✨', opciones: ['Blinding Lights', 'Less Than Zero', 'Creepin’', 'Take My Breath'], correcta: 4, mensaje: 'Justo lo que pasa cuando me sonríes 😮‍💨' },
+    { pista: '🦋🕯️🔥', opciones: ['Gasoline', 'Moth To A Flame', 'Dancing In The Flames', 'Sacrifice'], correcta: 2, mensaje: 'Siempre termino volviendo a ti, como palomita a la luz.' },
+    { pista: '🤔👤❓', opciones: ['Out of Time', 'Call Out My Name', 'Is There Someone Else?', 'Secrets'], correcta: 3, mensaje: 'Para mí no hay nadie más, solo tú 💗' },
+    { pista: '➖0️⃣⬇️', opciones: ['Less Than Zero', 'Often', 'Faith', 'Popular'], correcta: 1, mensaje: 'Las ganas de no verte: menos que cero 😌' },
+    // ---- Ronda 4 ----
+    { pista: '❄️👶', opciones: ['The Hills', 'Starboy', 'Heartless', 'Snowchild'], correcta: 4, mensaje: 'Ya casi llega el frío de diciembre… y contigo 🎄' },
+    { pista: '🎉👹', opciones: ['Party Monster', 'Starboy', 'Reminder', 'Earned It'], correcta: 1, mensaje: 'La fiesta que vamos a hacer cuando nos veamos 🎉' },
+    { pista: '😈🎲🎮', opciones: ['The Morning', 'Wicked Games', 'Faith', 'Gasoline'], correcta: 2, mensaje: 'Contigo no hay juegos: lo que siento es de verdad.' },
+    { pista: '🕵️‍♂️👣🤫', opciones: ['Secrets', 'Sacrifice', 'Creepin’', 'Often'], correcta: 3, mensaje: 'Así me meto en tus pensamientos: sin hacer ruido 🤫' },
+    { pista: '💃🔥', opciones: ['Moth To A Flame', 'Timeless', 'Blinding Lights', 'Dancing In The Flames'], correcta: 4, mensaje: 'Me debes un baile cuando nos veamos 💃' },
   ];
-  const MENSAJE_FINAL = '¡Eres la fan número 1! Y yo soy fan número 1 de ti 🎤💗';
+  const MENSAJE_FINAL = '¡Ronda completa! Eres la fan número 1… y yo soy fan número 1 de ti 🎤💗';
   // -------------------------------------------------------------------
 </script>
 <style>
@@ -54,6 +74,7 @@
   .next { margin-top: 6px; border: 0; background: var(--red); color: #fff; border-radius: 999px; padding: 12px 22px; font: 700 1rem "Quicksand", sans-serif; cursor: pointer; visibility: hidden; }
   .next.show { visibility: visible; }
   .final .pista { font-size: 4.5rem; }
+  .espera { color: var(--muted); font-variant-numeric: tabular-nums; margin-top: 4px; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
 </style>
 </head>
@@ -65,16 +86,33 @@
   <div id="juego"></div>
   <div class="msg" id="msg"></div>
   <button class="next" id="next">Siguiente ➜</button>
+  <p class="espera" id="espera"></p>
 </main>
 
 <script>
   const $ = id => document.getElementById(id);
-  $('sub').textContent = 'Versión The Weeknd · para ' + NOMBRE;
-  const dots = PREGUNTAS.map(() => { const d = document.createElement('i'); $('dots').appendChild(d); return d; });
+  const ESPERA = 24 * 60 * 60 * 1000;
+  const KEY = 'adivina-estado';
+  const rondas = Math.max(1, Math.ceil(PREGUNTAS.length / POR_RONDA));
+
+  // estado: en qué ronda va y cuándo terminó la última (para esperar 24 horas)
+  let estado = { ronda: 0, terminada: null };
+  try { estado = JSON.parse(localStorage.getItem(KEY)) || estado; } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch (e) {} };
+
+  // Si ya pasaron 24 horas desde que terminó, toca la siguiente ronda (al acabarse, vuelve a empezar)
+  if (estado.terminada && Date.now() - estado.terminada >= ESPERA) {
+    estado = { ronda: (estado.ronda + 1) % rondas, terminada: null };
+    guardar();
+  }
+
+  const lista = PREGUNTAS.slice(estado.ronda * POR_RONDA, estado.ronda * POR_RONDA + POR_RONDA);
+  $('sub').textContent = 'Versión The Weeknd · para ' + NOMBRE + ' · Ronda ' + (estado.ronda + 1) + ' de ' + rondas;
+  const dots = lista.map(() => { const d = document.createElement('i'); $('dots').appendChild(d); return d; });
   let q = 0;
 
   function mostrar() {
-    const p = PREGUNTAS[q];
+    const p = lista[q];
     $('msg').textContent = '';
     $('next').classList.remove('show');
     const j = $('juego');
@@ -88,28 +126,46 @@
     });
   }
   function responder(b, k) {
-    const p = PREGUNTAS[q];
+    const p = lista[q];
     if ($('next').classList.contains('show')) return;
     if (k === p.correcta) {
       b.classList.add('bien');
       dots[q].classList.add('ok');
       $('msg').textContent = '¡Sí! ' + p.mensaje;
-      $('next').textContent = q === PREGUNTAS.length - 1 ? 'Ver resultado 🏆' : 'Siguiente ➜';
+      $('next').textContent = q === lista.length - 1 ? 'Ver resultado 🏆' : 'Siguiente ➜';
       $('next').classList.add('show');
     } else {
       b.classList.remove('mal'); void b.offsetWidth; b.classList.add('mal');
       $('msg').textContent = 'Casi… intenta otra vez 😉';
     }
   }
-  $('next').addEventListener('click', () => {
-    q++;
-    if (q < PREGUNTAS.length) return mostrar();
+
+  // Pantalla de ronda terminada con la cuenta regresiva
+  function terminada() {
     $('main').classList.add('final');
+    dots.forEach(d => d.classList.add('ok'));
     $('juego').innerHTML = '<div class="pista">🏆</div>';
     $('msg').textContent = MENSAJE_FINAL + ' — ' + FIRMA;
     $('next').classList.remove('show');
+    const pad = x => String(x).padStart(2, '0');
+    const tick = () => {
+      const falta = estado.terminada + ESPERA - Date.now();
+      if (falta <= 0) { $('espera').textContent = '¡Ya hay canciones nuevas! Recarga la página 🎶'; return; }
+      $('espera').textContent = 'Nuevas canciones en ' + Math.floor(falta / 3600000) + ':' + pad(Math.floor(falta / 60000) % 60) + ':' + pad(Math.floor(falta / 1000) % 60) + ' 🎧';
+    };
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  $('next').addEventListener('click', () => {
+    q++;
+    if (q < lista.length) return mostrar();
+    estado.terminada = Date.now();
+    guardar();
+    terminada();
   });
-  mostrar();
+
+  if (estado.terminada) terminada(); else mostrar();
 </script>
 <a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
 </body>

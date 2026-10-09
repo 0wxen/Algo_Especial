@@ -13,7 +13,7 @@
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
   const ESPECIALIDAD = 'Sonrisas y corazones';
-  const FOTO = '';          // ej. 'foto.jpg' (en esta misma carpeta). Vacío = emoji
+  const FOTO = 'carola-credencial.jpg';          // ej. 'foto.jpg' (en esta misma carpeta). Vacío = emoji
   const EMOJI = '👩‍⚕️';
   const VIGENCIA = 'Para siempre';
   const MENSAJE_QR = 'Acceso autorizado a mi corazón. Sin cita previa, sin horario, sin fecha de vencimiento 💗';
@@ -76,10 +76,9 @@
       <p class="nombre" id="nombre"></p>
       <p class="esp" id="esp"></p>
       <div class="datos">
-        <div><small>NO. DE EMPLEADA</small>0001</div>
         <div><small>VIGENCIA</small><span id="vig"></span></div>
         <div><small>ÁREA</small>Consultorio 💗</div>
-        <div><small>AUTORIZA</small><span id="aut"></span></div>
+        <div style="grid-column: 1 / -1"><small>AUTORIZA</small><span id="aut"></span></div>
       </div>
       <div class="qr-row">
         <svg class="qr" id="qr" viewBox="0 0 21 21" shape-rendering="crispEdges" role="button" tabindex="0" aria-label="Escanear código"></svg>

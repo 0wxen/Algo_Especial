@@ -12,7 +12,9 @@
   // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
-  // Todos los papelitos del tarro (puedes poner los que quieras)
+  const TITULO = 'Tarro de razones de por qué me gustas';
+
+  // 1) Papelitos escritos a mano: salen primero, en desorden.
   const RAZONES = [
     'Porque tu risa me alegra el día.',
     'Porque eres súper inteligente.',
@@ -26,6 +28,54 @@
     'Porque me aguantas cuando estoy de malas.',
     'Porque contigo puedo ser yo.',
     'Porque la vida nos volvió a cruzar.',
+    'Porque tus ojos me desarman.',
+    'Porque tus rizos son lo más bonito del mundo.',
+    'Porque cuando me hablas se me olvida todo lo demás.',
+    'Porque vas a ser la mejor dentista 🦷',
+    'Porque eres tierna aunque te hagas la ruda 😌',
+    'Porque me cuentas tus cosas, hasta las más pequeñitas.',
+    'Porque contigo las llamadas nunca son suficientes.',
+    'Porque me haces reír sin intentarlo.',
+    'Porque eres auténtica, no te pareces a nadie.',
+    'Porque me cuidas, aunque sea desde lejos.',
+    'Porque tu voz me calma.',
+    'Porque cada mensaje tuyo me cambia el día.',
+    'Porque eres valiente.',
+    'Porque te esfuerzas muchísimo en todo lo que haces.',
+    'Porque tus abrazos (los que vienen en diciembre) ya me hacen falta.',
+    'Porque eres mi persona favorita para hablar de todo.',
+    'Porque me haces querer ser mejor.',
+    'Porque simplemente eres tú. Y eso basta.',
+  ];
+
+  // 2) Cuando se acaban, el tarro arma papelitos nuevos combinando estas dos listas
+  //    (así nunca se vacía). "pl: true" significa que es plural ("tus ojos").
+  const COSAS = [
+    { t: 'tu sonrisa' }, { t: 'tu risa' }, { t: 'tus ojos', pl: true }, { t: 'tus rizos', pl: true },
+    { t: 'tu voz' }, { t: 'tu forma de ser' }, { t: 'cómo me hablas' }, { t: 'cómo me escuchas' },
+    { t: 'tus mensajes de buenos días', pl: true }, { t: 'lo inteligente que eres' }, { t: 'lo dedicada que eres' },
+    { t: 'tu paciencia' }, { t: 'tus ocurrencias', pl: true }, { t: 'cómo cuidas a los demás' },
+    { t: 'tu forma de ver la vida' }, { t: 'lo bonita que eres' }, { t: 'tu ternura' },
+    { t: 'tus ganas de ser doctora', pl: true }, { t: 'cómo te emocionas con lo que te gusta' },
+    { t: 'que seas tú misma' }, { t: 'tus audios', pl: true }, { t: 'cómo dices mi nombre' },
+    { t: 'que me tengas paciencia' }, { t: 'tu música' }, { t: 'tus pecas', pl: true },
+  ];
+  const REMATES = [
+    'Y no es lo único, pero sí de lo mejor.',
+    'Nunca me voy a cansar de decírtelo.',
+    'Así, sin más razones.',
+    'Ni la distancia cambia eso.',
+    'Y cada día un poquito más.',
+    'Lo pienso más seguido de lo que crees.',
+    'Aunque no te lo diga tan seguido.',
+    'Es la verdad, no lo digo por decir.',
+    'Y en diciembre te lo digo en persona.',
+    'Simple, pero muy cierto 💗',
+    'Anótalo para que no se te olvide.',
+    'Snoopy está de acuerdo 🐶',
+    'Ni The Weeknd lo diría mejor 🎤',
+    'Eso va directo a P1 🏁',
+    'Golazo, la verdad ⚽',
   ];
   // -------------------------------------------------------------------
 </script>
@@ -39,29 +89,30 @@
     display: flex; flex-direction: column; align-items: center;
     padding: max(22px, env(safe-area-inset-top)) 16px max(26px, env(safe-area-inset-bottom)); text-align: center;
   }
-  h1 { font-family: "Caveat", cursive; color: var(--red); font-size: clamp(2.4rem, 10vw, 3.2rem); margin: 0; line-height: 1; }
-  .sub { color: var(--muted); margin: 4px 0 6px; }
+  h1 { font-family: "Caveat", cursive; color: var(--red); font-size: clamp(2.1rem, 9vw, 3rem); margin: 0; line-height: 1.02; max-width: 460px; }
+  .sub { color: var(--muted); margin: 6px 0 6px; }
   .jar { width: min(62vw, 240px); cursor: pointer; }
   .jar svg { width: 100%; height: auto; display: block; overflow: visible; }
   .jar.shake svg { animation: agitar .6s ease-in-out; transform-origin: 50% 90%; }
   @keyframes agitar { 15% { transform: rotate(-12deg); } 35% { transform: rotate(10deg); } 55% { transform: rotate(-8deg); } 75% { transform: rotate(5deg); } }
   .papel {
     width: min(100%, 360px); margin-top: 10px; min-height: 92px; background: #fffdf5; border-radius: 6px;
-    padding: 16px 18px; box-shadow: 0 10px 24px rgba(0,0,0,.1); transform: rotate(-2deg);
+    padding: 16px 18px; box-shadow: 0 10px 24px rgba(0,0,0,.1); transform: rotate(-2deg) translateY(10px);
     font-family: "Caveat", cursive; font-size: clamp(1.5rem, 6vw, 1.8rem); line-height: 1.2;
     display: flex; flex-direction: column; justify-content: center;
     opacity: 0; transition: opacity .4s, transform .5s cubic-bezier(.2,1.5,.4,1);
   }
   .papel.show { opacity: 1; transform: rotate(-2deg) translateY(0); }
-  .papel small { font-family: "Quicksand", sans-serif; font-size: .72rem; color: var(--muted); font-weight: 700; letter-spacing: .08em; }
+  .papel.c1 { background: #fffdf5; } .papel.c2 { background: #fff0f4; } .papel.c3 { background: #fff8dc; }
+  .papel.c4 { background: #eef8ff; } .papel.c5 { background: #f1fbea; } .papel.c6 { background: #f6efff; }
   button.go { margin-top: 14px; border: 0; background: var(--red); color: #fff; border-radius: 999px; padding: 13px 24px; font: 700 1rem "Quicksand", sans-serif; cursor: pointer; box-shadow: 0 6px 18px rgba(232,23,79,.3); }
-  .count { color: var(--muted); font-size: .9rem; margin-top: 8px; }
+  .nota { color: var(--muted); font-size: .9rem; margin-top: 10px; }
   .firma { font-family: "Caveat", cursive; color: var(--red); font-size: 1.5rem; margin-top: 4px; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
-  <h1>Tarro de razones</h1>
+  <h1 id="titulo"></h1>
   <p class="sub" id="sub"></p>
   <div class="jar" id="jar" role="button" tabindex="0" aria-label="Agitar el tarro">
     <svg viewBox="0 0 200 240" aria-hidden="true">
@@ -73,42 +124,62 @@
       <text x="100" y="155" text-anchor="middle" font-size="20" font-family="Caveat, cursive" fill="#3a2a2f">💗</text>
     </svg>
   </div>
-  <div class="papel" id="papel"><small></small><span></span></div>
+  <div class="papel" id="papel"><span></span></div>
   <button class="go" id="go">Agitar el tarro 🫙</button>
-  <div class="count" id="count"></div>
+  <div class="nota">Este tarro nunca se vacía 💗</div>
   <div class="firma" id="firma"></div>
 
 <script>
   const $ = id => document.getElementById(id);
+  $('titulo').textContent = TITULO;
   $('sub').textContent = 'Para ' + NOMBRE + ': saca un papelito cuando quieras';
   $('firma').textContent = '— ' + FIRMA;
 
-  // Papelitos de colores dentro del tarro
+  // Papelitos de colores dentro del tarro (decoración)
   const colores = ['#ffd0dc', '#ffe9a8', '#c9ecff', '#d8f5c8', '#ead6ff', '#ffd9b8'];
   let html = '';
-  for (let i = 0; i < Math.min(RAZONES.length * 2, 30); i++) {
+  for (let i = 0; i < 30; i++) {
     const x = 40 + Math.random() * 120, y = 120 + Math.random() * 100, r = Math.random() * 360;
     html += `<rect x="${x - 10}" y="${y - 5}" width="20" height="10" rx="2" fill="${colores[i % colores.length]}" transform="rotate(${r} ${x} ${y})"/>`;
   }
   $('papeles').innerHTML = html;
 
-  // Saca los papelitos sin repetir hasta acabarse
-  let bolsa = [], sacados = 0;
-  const rellenar = () => { bolsa = RAZONES.map((_, i) => i).sort(() => Math.random() - .5); };
-  rellenar();
+  // ---------- Todos los papelitos posibles ----------
+  const combinados = [];
+  COSAS.forEach(c => REMATES.forEach(r => combinados.push('Me gusta' + (c.pl ? 'n ' : ' ') + c.t + '. ' + r)));
+  const todos = [...RAZONES, ...combinados];
 
+  // Cuáles ya salieron (se guardan en su celular para no repetirlos)
+  const KEY = 'tarro-vistos';
+  let vistos = new Set();
+  try { vistos = new Set(JSON.parse(localStorage.getItem(KEY)) || []); } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify([...vistos])); } catch (e) {} };
+  const azar = arr => arr[Math.floor(Math.random() * arr.length)];
+
+  function siguiente() {
+    // Primero los escritos a mano; luego los combinados
+    let opciones = RAZONES.filter(t => !vistos.has(t));
+    if (!opciones.length) opciones = combinados.filter(t => !vistos.has(t));
+    if (!opciones.length) { vistos.clear(); opciones = todos; }   // después de cientos, el tarro se rellena
+    const t = azar(opciones);
+    vistos.add(t);
+    guardar();
+    return t;
+  }
+
+  let ocupado = false;
   function sacar() {
-    if (!bolsa.length) rellenar();
-    const i = bolsa.pop();
-    sacados++;
+    if (ocupado) return;
+    ocupado = true;
     const jar = $('jar'), p = $('papel');
     jar.classList.remove('shake'); void jar.offsetWidth; jar.classList.add('shake');
     p.classList.remove('show');
     setTimeout(() => {
-      p.querySelector('small').textContent = 'PAPELITO #' + (i + 1);
-      p.querySelector('span').textContent = RAZONES[i];
+      p.querySelector('span').textContent = siguiente();
+      p.className = 'papel c' + (1 + Math.floor(Math.random() * 6));
+      void p.offsetWidth;
       p.classList.add('show');
-      $('count').textContent = sacados >= RAZONES.length ? '¡Ya los leíste todos! (pero puedes seguir 💗)' : 'Papelitos leídos: ' + sacados + ' de ' + RAZONES.length;
+      ocupado = false;
     }, 550);
   }
   $('go').addEventListener('click', sacar);

@@ -51,11 +51,32 @@
   .card p { margin: 6px 0 0; font-size: 1.1rem; line-height: 1.45; }
   .again { margin-top: 12px; border: 0; background: var(--red); color: #fff; border-radius: 10px; padding: 12px 18px; font: 900 1rem "Titillium Web", sans-serif; text-transform: uppercase; cursor: pointer; display: none; }
   .again.show { display: inline-block; }
+
+  /* Tabla de mejores tiempos */
+  /* En pantallas anchas (laptop) la tabla va a la derecha; en el celular, abajo */
+  @media (min-width: 760px) {
+    main { width: min(100%, 860px); display: grid; grid-template-columns: 1fr 320px; gap: 28px; align-items: start; }
+    .tabla { margin-top: 64px !important; position: sticky; top: 20px; }
+  }
+  .tabla { margin-top: 18px; background: var(--panel); border-radius: 12px; overflow: hidden; text-align: left; }
+  .tabla h2 { margin: 0; padding: 10px 14px; font-size: .85rem; letter-spacing: .15em; font-weight: 900; font-style: italic; background: var(--red); }
+  .fila { display: grid; grid-template-columns: 42px 1fr auto; gap: 8px; align-items: center; padding: 10px 14px; border-top: 1px solid rgba(255,255,255,.06); }
+  .fila:nth-child(even) { background: rgba(255,255,255,.03); }
+  .fila .pos { font-weight: 900; font-style: italic; }
+  .fila .t { font-weight: 900; font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+  .fila .f { color: var(--muted); font-size: .8rem; }
+  .fila.mejor .t { color: var(--purple); }
+  .fila.nuevo { animation: brilla 1.2s ease-out; }
+  @keyframes brilla { from { background: rgba(176, 76, 255, .35); } }
+  .fila.ref { border-top: 1px dashed rgba(255,255,255,.2); color: var(--muted); }
+  .fila.ref .t { color: var(--gold); font-size: 1rem; }
+  .vacio { padding: 12px 14px; color: var(--muted); }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
 <main>
+  <div class="juego">
   <small class="k">BOXES · BOXES</small>
   <h1>Pit stop</h1>
   <p class="sub" id="sub"></p>
@@ -77,6 +98,14 @@
 
   <div class="card" id="card"><b>RADIO DEL EQUIPO</b><p id="msg"></p></div>
   <button class="again" id="again">Intentar otra vez</button>
+
+  </div>
+
+  <aside class="tabla">
+    <h2>🏆 MEJORES TIEMPOS</h2>
+    <div id="tabla"></div>
+    <div class="fila ref"><span class="pos">🌍</span><span>Récord en F1 · McLaren, Qatar 2023</span><span class="t">1.80 s</span></div>
+  </aside>
 </main>
 
 <script>
@@ -105,11 +134,39 @@
       const s = ((performance.now() - t0) / 1000).toFixed(2);
       $('timer').textContent = s + ' s';
       $('timer').classList.add('done');
-      $('hint').textContent = '🟣 ¡Récord personal! ¡Vamos, vamos!';
+      const esRecord = !tiempos.length || +s < tiempos[0].t;
+      const nuevo = { t: +s, fecha: Date.now() };
+      tiempos = [...tiempos, nuevo].sort((a, b) => a.t - b.t).slice(0, TOP);
+      guardarTiempos();
+      pintarTabla(nuevo);
+      $('hint').textContent = esRecord ? '🟣 ¡Récord personal! ¡Vamos, vamos!' : (tiempos.includes(nuevo) ? '¡Entraste a la tabla! 🏁' : '¡Buen pit stop! Inténtalo otra vez 💪');
       $('card').classList.add('show');
       $('again').classList.add('show');
     }
   }
+  // ---------- Tabla de mejores tiempos (se guardan en su celular) ----------
+  const TOP = 5;
+  const KEY = 'pitstop-tiempos';
+  let tiempos = [];
+  try { tiempos = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
+  function guardarTiempos() { try { localStorage.setItem(KEY, JSON.stringify(tiempos)); } catch (e) {} }
+  function pintarTabla(nuevo) {
+    const t = $('tabla');
+    if (!tiempos.length) { t.innerHTML = '<div class="vacio">Todavía no hay tiempos. ¡Haz tu primer pit stop! 🛞</div>'; return; }
+    t.innerHTML = '';
+    const medallas = ['🥇', '🥈', '🥉', '4', '5'];
+    tiempos.forEach((x, i) => {
+      const f = document.createElement('div');
+      f.className = 'fila' + (i === 0 ? ' mejor' : '') + (x === nuevo ? ' nuevo' : '');
+      f.innerHTML = '<span class="pos"></span><span class="f"></span><span class="t"></span>';
+      f.querySelector('.pos').textContent = medallas[i] || (i + 1);
+      f.querySelector('.f').textContent = new Date(x.fecha).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) + ' · ' + new Date(x.fecha).toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit' });
+      f.querySelector('.t').textContent = x.t.toFixed(2) + ' s';
+      t.appendChild(f);
+    });
+  }
+  pintarTabla();
+
   $('again').addEventListener('click', () => {
     cambiadas = 0;
     llantas.forEach(l => l.classList.remove('new', 'pop'));

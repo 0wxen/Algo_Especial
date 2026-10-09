@@ -12,54 +12,126 @@
   // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
-  // Cada diente guarda una razón o un recuerdo. Puedes poner de 6 a 16.
-  const DIENTES = [
+  // Son 12 dientes. Cada 24 horas (contadas desde la primera vez que lo abre)
+  // TODOS los dientes cambian de mensaje. Con 60 mensajes alcanza para 5 días sin repetir;
+  // si agregas más, dura más días antes de volver a empezar.
+  const MENSAJES = [
+    // Día 1
     'Tu sonrisa (obviamente, es un odontograma 😄)',
     'Cómo te ríes de mis chistes malos',
-    'Lo dedicada que eres con la escuela',
+    'Lo dedicada que eres con la escuela 📚',
     'Las llamadas que se alargan sin darnos cuenta',
-    'Que te guste Snoopy tanto como a mí ahora',
+    'Que te guste Snoopy tanto como a mí ahora 🐶',
     'Tu buen gusto musical 🎤',
     'Que te animes a ver F1 conmigo 🏎️',
-    'Tu paciencia conmigo',
+    'Tu paciencia conmigo (que no es poca 😅)',
     'Cómo me escuchas',
     'Que siempre me haces sentir bien',
-    'Lo bonita que eres',
-    'Que la vida nos volvió a cruzar',
+    'Lo bonita que eres, por dentro y por fuera',
+    'Que la vida nos volvió a cruzar ✨',
+    // Día 2
+    'Diagnóstico: me haces muchísima falta.',
+    'Este diente dice que hoy te va a ir increíble 🦷✨',
+    'Tu risa es mi canción favorita (perdón, The Weeknd).',
+    'Cada mensaje tuyo me cambia el día.',
+    'Tratamiento recomendado: un abrazo largo en diciembre 🤗',
+    'Eres la doctora más bonita que conozco.',
+    'Me encanta cuando me cuentas tu día, aunque sea lo más simple.',
+    'Contigo hasta los lunes se sienten bonitos.',
+    'Snoopy aprueba esta dentadura ✅🐶',
+    'Me gusta mucho cómo eres. Así, tal cual.',
+    'Ya falta menos para vernos 🎄',
+    'Si hoy estás cansada, descansa. Te lo mereces 💤',
+    // Día 3
+    'Eres de esas personas que hacen que todo valga la pena.',
+    'Este diente guarda un beso para cuando nos veamos 😘',
+    'Eres P1 en mi clasificación, siempre 🏁',
+    'Futura Dra. ' + NOMBRE + ': suena perfecto 🩺',
+    'Gracias por estar, aunque estemos lejos.',
+    'Tu voz es mi lugar seguro.',
+    'Me gusta imaginar todo lo que vamos a hacer juntos.',
+    'Hoy toma agüita y sonríe. Doctor’s orders 💧',
+    'Tienes el corazón más bonito que conozco.',
+    'Golazo: haberte conocido ⚽',
+    'Si pudiera, hoy te llevaba un helado 🍦',
+    'Me haces muy feliz, que no se te olvide.',
+    // Día 4
+    'Ni la distancia le gana a lo que siento.',
+    'Este diente está orgulloso de ti (y yo también).',
+    'Eres mi persona favorita para hablar de todo.',
+    'Hoy te mando toda la buena vibra del mundo ✨',
+    'Paciente con sonrisa perfecta: confirmado 😁',
+    'Me encanta lo inteligente que eres 🧠',
+    'Gracias por aguantar mis locuras 🙈',
+    'Box, box: hora de descansar un ratito 🏎️',
+    'Cuando sonríes, todo se acomoda.',
+    'Me gusta mucho cómo me cuidas.',
+    'Eres mi casualidad favorita.',
+    'Cada día me caes mejor (y eso que ya me caías increíble).',
+    // Día 5
+    'Hoy pensé en ti. Bueno, como todos los días.',
+    'Este diente pide que me mandes una foto de tu sonrisa 📸',
+    'Lo mejor de mis días tiene tu nombre.',
+    'Eres más fuerte de lo que crees 💪',
+    'Contigo todo se siente fácil.',
+    'Tu felicidad es de mis cosas favoritas.',
+    'Me encanta que seas tú.',
+    'Ya quiero escucharte reír en persona.',
+    'Pasito a pasito, a pasos de tortuga 🐢💗',
+    'Eres increíble y lo sabes (y si no, aquí te lo digo).',
+    'Gracias por cada sonrisa, cada llamada y cada momento.',
+    'Te quiero mucho, ' + NOMBRE + ' 💗',
   ];
   // -------------------------------------------------------------------
 </script>
 <style>
-  :root { --bg: #eef8f6; --teal: #138a7e; --ink: #20343a; --muted: #61787e; --gum: #f7a6b8; --red: #e8174f; --card: #fff; }
+  :root {
+    --bg: #eef8f6; --teal: #138a7e; --ink: #20343a; --muted: #61787e; --red: #e8174f;
+    --gum1: #ff9fb6; --gum2: #f06a8f; --card: #fff;
+  }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; }
   body {
-    background: var(--bg); color: var(--ink); font-family: "Quicksand", system-ui, sans-serif;
+    background:
+      radial-gradient(circle at 10% 0%, #d8f3ee 0, transparent 40%),
+      radial-gradient(circle at 100% 100%, #ffe3ec 0, transparent 45%),
+      var(--bg);
+    color: var(--ink); font-family: "Quicksand", system-ui, sans-serif;
     min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
   }
   main { width: min(100%, 520px); margin: 0 auto; text-align: center; padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom)); }
   .tag { display: inline-block; background: var(--teal); color: #fff; border-radius: 6px; padding: 3px 10px; font-weight: 700; font-size: .75rem; letter-spacing: .1em; }
   h1 { font-family: "Caveat", cursive; color: var(--teal); font-size: clamp(2.2rem, 9vw, 3rem); margin: 6px 0 0; line-height: 1; }
-  .sub { color: var(--muted); margin: 4px 0 8px; }
-  svg { width: 100%; height: auto; display: block; }
+  .sub { color: var(--muted); margin: 4px 0 6px; }
+  .dia { display: inline-block; background: #ffe0e8; color: var(--red); border-radius: 999px; padding: 3px 12px; font-weight: 700; font-size: .8rem; }
+
+  svg { width: 100%; height: auto; display: block; margin-top: 4px; overflow: visible; }
   .tooth { cursor: pointer; }
-  .tooth path { fill: #fff; stroke: var(--ink); stroke-width: 2.2; transition: fill .3s; }
-  .tooth text { font: 700 10px "Quicksand", sans-serif; fill: var(--muted); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
-  .tooth.visto path { fill: #ffe0e8; }
-  .tooth.activo path { fill: var(--red); }
-  .tooth.activo text { fill: #fff; }
-  .tooth:hover path { stroke: var(--red); }
+  .tooth .shape { fill: url(#enamel); stroke: #cfc6b8; stroke-width: 1.4; transition: fill .3s, stroke .3s; }
+  .tooth .shine { fill: #fff; opacity: .9; pointer-events: none; }
+  .tooth .heart { opacity: 0; transition: opacity .3s, transform .3s; pointer-events: none; }
+  .tooth.visto .shape { fill: url(#enamelPink); }
+  .tooth.visto .heart { opacity: 1; }
+  .tooth.activo .shape { stroke: var(--red); stroke-width: 2.4; }
+  .tooth.activo { filter: drop-shadow(0 0 6px rgba(232, 23, 79, .55)); }
+  .tooth .bob { transform-box: fill-box; transform-origin: center; }
+  .tooth.pop .bob { animation: pop .45s cubic-bezier(.2,1.6,.4,1); }
+  @keyframes pop { 50% { transform: scale(1.18); } }
+  .sparkle { pointer-events: none; animation: spark .9s ease-out forwards; }
+  @keyframes spark { from { opacity: 1; transform: translateY(0) scale(.6); } to { opacity: 0; transform: translateY(-22px) scale(1.2); } }
+
   .card {
-    background: var(--card); border-radius: 16px; padding: 16px 18px; margin-top: 6px; min-height: 96px;
+    background: var(--card); border-radius: 16px; padding: 16px 18px; margin-top: 4px; min-height: 104px;
     box-shadow: 0 10px 28px rgba(19,138,126,.14); border-left: 5px solid var(--teal); text-align: left;
   }
   .card small { color: var(--muted); font-weight: 700; letter-spacing: .08em; font-size: .72rem; }
-  .card p { font-family: "Caveat", cursive; font-size: clamp(1.45rem, 5.5vw, 1.75rem); margin: 4px 0 0; line-height: 1.2; }
-  .card.pop { animation: pop .4s cubic-bezier(.2,1.4,.4,1); }
-  @keyframes pop { from { transform: scale(.94); opacity: 0; } }
+  .card p { font-family: "Caveat", cursive; font-size: clamp(1.5rem, 5.8vw, 1.8rem); margin: 4px 0 0; line-height: 1.2; }
+  .card.pop { animation: cardpop .4s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes cardpop { from { transform: scale(.94); opacity: 0; } }
   .count { color: var(--muted); font-size: .9rem; margin-top: 10px; }
+  .next { color: var(--muted); font-size: .85rem; margin-top: 4px; font-variant-numeric: tabular-nums; }
   .firma { font-family: "Caveat", cursive; color: var(--red); font-size: 1.5rem; margin-top: 6px; }
-  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
 </style>
 </head>
 <body>
@@ -67,61 +139,145 @@
   <span class="tag">EXPEDIENTE CLÍNICO</span>
   <h1>Odontograma del amor</h1>
   <p class="sub" id="sub"></p>
-  <svg viewBox="0 0 400 330" id="boca" role="img" aria-label="Dentadura: cada diente tiene un mensaje">
-    <path d="M60 150 C60 40 340 40 340 150 Z" fill="var(--gum)" opacity=".55"/>
-    <path d="M60 180 C60 290 340 290 340 180 Z" fill="var(--gum)" opacity=".55"/>
+  <span class="dia" id="dia"></span>
+
+  <svg viewBox="0 0 400 350" id="boca" role="img" aria-label="Dentadura: cada diente tiene un mensaje">
+    <defs>
+      <linearGradient id="enamel" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffffff"/>
+        <stop offset=".6" stop-color="#fbf8f2"/>
+        <stop offset="1" stop-color="#ece5d8"/>
+      </linearGradient>
+      <linearGradient id="enamelPink" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#ffffff"/>
+        <stop offset="1" stop-color="#ffd3df"/>
+      </linearGradient>
+      <linearGradient id="gum" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="var(--gum1)"/>
+        <stop offset="1" stop-color="var(--gum2)"/>
+      </linearGradient>
+      <radialGradient id="mouth" cx=".5" cy=".5" r=".55">
+        <stop offset="0" stop-color="#ffd9e3"/>
+        <stop offset="1" stop-color="#ffc2d2"/>
+      </radialGradient>
+    </defs>
+    <ellipse cx="200" cy="175" rx="150" ry="140" fill="url(#mouth)" opacity=".55"/>
+    <ellipse cx="200" cy="232" rx="58" ry="30" fill="#ff9fb6" opacity=".35"/>
     <g id="dientes"></g>
+    <g id="encias"></g>
+    <g id="chispas"></g>
   </svg>
-  <div class="card" id="card"><small>DIAGNÓSTICO</small><p>Toca cualquier diente para ver qué guarda 🦷</p></div>
+
+  <div class="card" id="card"><small>DIAGNÓSTICO</small><p>Toca cualquier diente para ver qué guarda hoy 🦷</p></div>
   <div class="count" id="count"></div>
+  <div class="next" id="next"></div>
   <div class="firma" id="firma"></div>
 </main>
 
 <script>
   const $ = id => document.getElementById(id);
+  const NS = 'http://www.w3.org/2000/svg';
   $('sub').textContent = 'Paciente: ' + NOMBRE + ' · Cada diente guarda algo';
   $('firma').textContent = '— Dr. ' + FIRMA;
 
-  const NS = 'http://www.w3.org/2000/svg';
-  const n = DIENTES.length;
-  const arriba = Math.ceil(n / 2), abajo = n - arriba;
-  const g = $('dientes');
-  const vistos = new Set();
-  const forma = 'M-11 -14 C-12 -20 -4 -20 0 -16 C4 -20 12 -20 11 -14 C12 -4 8 2 7 12 C6 18 2 18 1 10 C0 6 0 6 -1 10 C-2 18 -6 18 -7 12 C-8 2 -12 -4 -11 -14 Z';
-  let activo = null;
+  // ---------- Tiempo: cada 24 horas desde la primera vez que lo abre ----------
+  const ESPERA = 24 * 60 * 60 * 1000;
+  const KEY = 'odontograma-estado';
+  let estado = null;
+  try { estado = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  if (!estado || !estado.inicio) estado = { inicio: Date.now(), dia: 0, vistos: [] };
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch (e) {} };
+  const diaActual = () => Math.floor((Date.now() - estado.inicio) / ESPERA);
+  if (diaActual() !== estado.dia) { estado.dia = diaActual(); estado.vistos = []; }
+  guardar();
 
-  function arco(cuantos, cy, desde, hasta, offset) {
-    for (let k = 0; k < cuantos; k++) {
-      const t = cuantos === 1 ? .5 : k / (cuantos - 1);
-      const ang = (desde + (hasta - desde) * t) * Math.PI / 180;
-      const x = 200 + 125 * Math.cos(ang);
-      const y = cy + 92 * Math.sin(ang);
-      const rot = ang * 180 / Math.PI - 90;   // raíces hacia la encía
-      const idx = offset + k;
+  // ---------- Formas de los dientes (la corona apunta hacia +y) ----------
+  const FORMAS = {
+    incisivo: { d: 'M-9 -18 C-10 -6 -10.5 6 -8.5 15 Q0 19 8.5 15 C10.5 6 10 -6 9 -18 Z', brillo: 'M-5 -8 C-6 -2 -6 4 -5 9 C-3.5 4 -3.5 -2 -3 -8 Z' },
+    canino:   { d: 'M-9.5 -18 C-11.5 -4 -10 7 -3.5 14 Q0 19 3.5 14 C10 7 11.5 -4 9.5 -18 Z', brillo: 'M-5.5 -8 C-6.5 -1 -5.5 5 -3 9 C-3 4 -3.5 -2 -3.5 -8 Z' },
+    molar:    { d: 'M-14 -18 C-16 -6 -15.5 6 -12 14 Q-7.5 18 -4 14.5 Q0 18.5 4 14.5 Q7.5 18 12 14 C15.5 6 16 -6 14 -18 Z', brillo: 'M-9 -9 C-10.5 -2 -10 4 -8 9 C-6.5 4 -7 -2 -6.5 -9 Z' },
+  };
+  // De afuera hacia el centro en cada mitad: molar, canino, incisivo | incisivo, canino, molar
+  const TIPOS = ['molar', 'canino', 'incisivo', 'incisivo', 'canino', 'molar'];
+  const ARCOS = [
+    { cy: 172, rx: 118, ry: 100, angulos: [214, 240, 262, 278, 300, 326] },   // arriba
+    { cy: 180, rx: 118, ry: 100, angulos: [146, 120, 98, 82, 60, 34] },      // abajo
+  ];
+
+  const g = $('dientes');
+  const dientes = [];
+  ARCOS.forEach((arco, a) => {
+    arco.angulos.forEach((angulo, k) => {
+      const idx = a * 6 + k;
+      const t = angulo * Math.PI / 180;
+      const x = 200 + arco.rx * Math.cos(t), y = arco.cy + arco.ry * Math.sin(t);
+      const rot = angulo + 90;   // la corona mira hacia el centro de la boca
+      const f = FORMAS[TIPOS[k]];
       const el = document.createElementNS(NS, 'g');
       el.setAttribute('class', 'tooth');
-      el.setAttribute('transform', `translate(${x} ${y}) rotate(${rot}) scale(1.35)`);
-      el.innerHTML = `<path d="${forma}"/><text y="-8" transform="rotate(${-rot})">${idx + 1}</text>`;
-      el.addEventListener('click', () => ver(idx, el));
+      el.setAttribute('transform', `translate(${x.toFixed(1)} ${y.toFixed(1)}) rotate(${rot}) scale(1.45)`);
+      el.innerHTML = `<g class="bob"><path class="shape" d="${f.d}"/><path class="shine" d="${f.brillo}"/>
+        <text class="heart" y="6" font-size="9" text-anchor="middle" transform="rotate(${-rot})">💗</text></g>`;
+      el.addEventListener('click', () => ver(idx, el, x, y));
       g.appendChild(el);
-    }
-  }
-  arco(arriba, 160, 200, 340, 0);
-  arco(abajo, 170, 160, 20, arriba);
+      dientes.push(el);
+    });
+  });
 
-  function ver(i, el) {
+  // Encías (se dibujan encima de la raíz de los dientes)
+  function arcoEncia(cy, rx, ry, a1, a2) {
+    const p = a => [200 + rx * Math.cos(a * Math.PI / 180), cy + ry * Math.sin(a * Math.PI / 180)];
+    const [x1, y1] = p(a1), [x2, y2] = p(a2);
+    return `M${x1.toFixed(1)} ${y1.toFixed(1)} A${rx} ${ry} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+  }
+  $('encias').innerHTML =
+    `<path d="${arcoEncia(172, 145, 127, 200, 340)}" fill="none" stroke="url(#gum)" stroke-width="30" stroke-linecap="round"/>
+     <path d="${arcoEncia(180, 145, 127, 20, 160)}" fill="none" stroke="url(#gum)" stroke-width="30" stroke-linecap="round"/>
+     <path d="${arcoEncia(172, 136, 118, 206, 334)}" fill="none" stroke="#fff" stroke-width="2" opacity=".35" stroke-linecap="round"/>`;
+
+  // ---------- Mensajes ----------
+  const n = dientes.length;
+  const mensaje = i => MENSAJES[(estado.dia * n + i) % MENSAJES.length];
+  let activo = null;
+
+  function ver(i, el, x, y) {
     if (activo) activo.classList.remove('activo');
     activo = el;
     el.classList.add('activo', 'visto');
-    vistos.add(i);
+    el.classList.remove('pop'); void el.getBoundingClientRect(); el.classList.add('pop');
+    if (!estado.vistos.includes(i)) { estado.vistos.push(i); guardar(); }
+
+    const s = document.createElementNS(NS, 'text');
+    s.setAttribute('x', x); s.setAttribute('y', y); s.setAttribute('text-anchor', 'middle');
+    s.setAttribute('class', 'sparkle'); s.setAttribute('font-size', '16');
+    s.textContent = '✨';
+    $('chispas').appendChild(s);
+    setTimeout(() => s.remove(), 950);
+
     const c = $('card');
     c.innerHTML = '<small></small><p></p>';
     c.querySelector('small').textContent = 'DIENTE ' + (i + 1);
-    c.querySelector('p').textContent = DIENTES[i];
+    c.querySelector('p').textContent = mensaje(i);
     c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
-    $('count').textContent = vistos.size === n ? '¡Revisaste todos! Paciente con sonrisa perfecta 💗' : 'Revisados: ' + vistos.size + ' de ' + n;
+    contar();
   }
-  $('count').textContent = 'Revisados: 0 de ' + n;
+  function contar() {
+    $('count').textContent = estado.vistos.length === n
+      ? '¡Revisaste todos los de hoy! Paciente con sonrisa perfecta 💗'
+      : 'Revisados hoy: ' + estado.vistos.length + ' de ' + n;
+  }
+  estado.vistos.forEach(i => dientes[i] && dientes[i].classList.add('visto'));
+  $('dia').textContent = 'Consulta del día ' + (estado.dia + 1);
+  contar();
+
+  // Cuenta regresiva para los mensajes nuevos
+  const pad = v => String(v).padStart(2, '0');
+  setInterval(tick, 1000); tick();
+  function tick() {
+    const falta = estado.inicio + (estado.dia + 1) * ESPERA - Date.now();
+    if (falta <= 0) { $('next').textContent = '¡Hay mensajes nuevos! Recarga la página 🦷'; return; }
+    $('next').textContent = 'Mensajes nuevos en ' + Math.floor(falta / 3600000) + ':' + pad(Math.floor(falta / 60000) % 60) + ':' + pad(Math.floor(falta / 1000) % 60);
+  }
 </script>
 <a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
 </body>
