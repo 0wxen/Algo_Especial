@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14183a">
+<title>Entre tú y yo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  // Busca tu ciudad en Google Maps, clic derecho → copia los números (latitud, longitud)
+  const MI_CIUDAD  = { nombre: 'Durango',  lat: 24.0277, lon: -104.6532 };
+  const SU_CIUDAD  = { nombre: 'Puebla',   lat: 19.0414, lon: -98.2063 };
+  const MENSAJE = 'Hay muchos kilómetros entre nosotros, pero vemos la misma luna 🌙';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg1: #14183a; --bg2: #3a1d4a; --text: #f4efff; --muted: #b8b0d6; --pink: #ff7aa2; --gold: #ffd66b; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: linear-gradient(170deg, var(--bg1), var(--bg2)); color: var(--text);
+    font-family: "Quicksand", system-ui, sans-serif; min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+  }
+  .stars { position: fixed; inset: 0; pointer-events: none; }
+  .stars i { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; animation: tw 3s ease-in-out infinite alternate; }
+  @keyframes tw { from { opacity: .2; } to { opacity: 1; } }
+  main { position: relative; width: min(100%, 520px); margin: 0 auto; text-align: center; padding: max(24px, env(safe-area-inset-top)) 16px max(30px, env(safe-area-inset-bottom)); }
+  h1 { font-family: "Caveat", cursive; font-size: clamp(2.4rem, 10vw, 3.2rem); margin: 0; color: var(--pink); line-height: 1; }
+  .moon { font-size: 2.6rem; }
+  svg { width: 100%; height: auto; display: block; margin-top: 6px; overflow: visible; }
+  .arc { fill: none; stroke: var(--gold); stroke-width: 2.5; stroke-dasharray: 2 8; stroke-linecap: round; animation: dash 1.2s linear infinite; }
+  @keyframes dash { to { stroke-dashoffset: -20; } }
+  .pin text { fill: var(--text); font: 700 13px "Quicksand", sans-serif; text-anchor: middle; }
+  .pin .who { fill: var(--muted); font-size: 11px; }
+  .km { font-size: clamp(2.6rem, 13vw, 3.6rem); font-weight: 700; line-height: 1; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .km small { font-size: 1.2rem; color: var(--muted); }
+  .bonus { color: var(--muted); margin: 4px 0 0; }
+  .msg { font-family: "Caveat", cursive; font-size: clamp(1.5rem, 6vw, 1.8rem); margin: 18px 0 0; line-height: 1.2; }
+  .firma { font-family: "Caveat", cursive; color: var(--pink); font-size: 1.5rem; margin-top: 14px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="stars" id="stars" aria-hidden="true"></div>
+<main>
+  <div class="moon">🌙</div>
+  <h1>Entre tú y yo</h1>
+  <svg viewBox="0 0 360 180" role="img" aria-label="Línea entre dos ciudades con un corazón viajando">
+    <path id="arc" class="arc" d="M50 140 Q180 -10 310 140"/>
+    <g class="pin">
+      <text x="50" y="112" font-size="26">📍</text>
+      <text x="50" y="162" id="miNombre"></text>
+      <text x="50" y="176" class="who" id="miWho"></text>
+    </g>
+    <g class="pin">
+      <text x="310" y="112" font-size="26">📍</text>
+      <text x="310" y="162" id="suNombre"></text>
+      <text x="310" y="176" class="who" id="suWho"></text>
+    </g>
+    <text id="heart" font-size="22" text-anchor="middle" dominant-baseline="central">💗</text>
+  </svg>
+  <div class="km"><span id="km">0</span> <small>km</small></div>
+  <p class="bonus" id="bonus"></p>
+  <p class="msg" id="msg"></p>
+  <div class="firma" id="firma"></div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('miNombre').textContent = MI_CIUDAD.nombre;  $('miWho').textContent = FIRMA;
+  $('suNombre').textContent = SU_CIUDAD.nombre;  $('suWho').textContent = NOMBRE;
+  $('msg').textContent = MENSAJE;
+  $('firma').textContent = '— ' + FIRMA;
+
+  // Estrellitas
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement('i');
+    s.style.left = Math.random() * 100 + 'vw'; s.style.top = Math.random() * 100 + 'vh';
+    s.style.animationDelay = Math.random() * 3 + 's';
+    $('stars').appendChild(s);
+  }
+
+  // Distancia real entre las dos ciudades
+  const rad = d => d * Math.PI / 180;
+  const dLat = rad(SU_CIUDAD.lat - MI_CIUDAD.lat), dLon = rad(SU_CIUDAD.lon - MI_CIUDAD.lon);
+  const a = Math.sin(dLat / 2) ** 2 + Math.cos(rad(MI_CIUDAD.lat)) * Math.cos(rad(SU_CIUDAD.lat)) * Math.sin(dLon / 2) ** 2;
+  const km = Math.round(6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  let k = 0;
+  const sube = setInterval(() => { k = Math.min(km, k + Math.ceil(km / 60)); $('km').textContent = k.toLocaleString('es-MX'); if (k >= km) clearInterval(sube); }, 25);
+  $('bonus').textContent = '≈ ' + Math.round(km / 4.4).toLocaleString('es-MX') + ' canciones de The Weeknd en carretera 🚗🎶';
+
+  // Corazón que viaja de una ciudad a otra
+  const arc = $('arc'), heart = $('heart'), L = arc.getTotalLength();
+  let t = 0, dir = 1;
+  function volar() {
+    t += dir * 0.004;
+    if (t >= 1 || t <= 0) dir *= -1;
+    const p = arc.getPointAtLength(Math.max(0, Math.min(1, t)) * L);
+    heart.setAttribute('x', p.x); heart.setAttribute('y', p.y);
+    requestAnimationFrame(volar);
+  }
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const p = arc.getPointAtLength(L / 2); heart.setAttribute('x', p.x); heart.setAttribute('y', p.y);
+  } else volar();
+
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

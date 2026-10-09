@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f0faf8">
+<title>Tú puedes, doctora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const INICIO_EXAMENES = '2026-10-26';   // primer día de exámenes
+  const FIN_EXAMENES = '2026-11-01';      // último día de exámenes
+  const HORA_PRIMER_EXAMEN = '08:00';     // para la cuenta regresiva
+
+  // Un mensaje por día ANTES de los exámenes.
+  // El ÚLTIMO de la lista sale el día antes de que empiecen, el penúltimo dos días antes, etc.
+  const ANTES = [
+    'Faltan unos días para tus exámenes, pero hoy solo quiero recordarte que eres muy capaz 💗',
+    'Haz un plan: un tema por día y verás que todo cabe. Tú puedes 📚',
+    'Estudiar también es descansar bien. Duerme tus horas, doctora 😴',
+    'Cada cosa que aprendes hoy es una sonrisa que vas a cuidar mañana 🦷',
+    'Si un tema se te complica, explícaselo a Snoopy (o a mí). Explicando se aprende 🐶',
+    'Toma agüita, estírate y sigue. Vas muy bien 💧',
+    'Me encanta lo dedicada que eres. De verdad lo admiro.',
+    'Pomodoro: 25 minutos de estudio y 5 de descanso. Y en el descanso, un mensajito para mí 😌',
+    'No tienes que saberlo todo hoy, solo un poquito más que ayer.',
+    'Futura Dra. ' + NOMBRE + '... suena increíble, ¿no? 🩺',
+    'Cuando sientas que no puedes, acuérdate de todo lo que ya lograste para llegar hasta aquí.',
+    'Haz tus resúmenes bonitos, con colores. Tu cerebro te lo va a agradecer 🖍️',
+    'Hoy repasa lo que más se te dificulta. Lo fácil ya lo tienes 💪',
+    'Come bien aunque estés estudiando. Las doctoras también necesitan energía 🍎',
+    'Pon una playlist de The Weeknd bajito y a darle 🎧',
+    'Respira. Vas mucho mejor de lo que crees.',
+    'Ya casi empiezan. Confía en todo lo que estudiaste ✨',
+    'Mañana empiezan tus exámenes. Hoy repasa tranquila, duerme temprano y confía en ti. Te va a ir increíble 💗',
+  ];
+
+  // Un mensaje por cada día DE exámenes (el 1º el primer día, el 2º el segundo...)
+  const DURANTE = [
+    'Día 1. Hoy empieza todo y estás lista. Respira hondo y a brillar 🦷✨',
+    'Día 2. Ya pasó el primero, ¡ya vas! Sigue así.',
+    'Día 3. Lee bien cada pregunta, sin prisa. Tú sabes esto.',
+    'Día 4. Ya vas a la mitad. Estoy muy orgulloso de ti 💗',
+    'Día 5. Si hoy estás cansada es normal. Ya falta poquito.',
+    'Día 6. Penúltimo día. Snoopy ya está preparando la fiesta 🐶🎉',
+    'Último día. Da todo lo que tienes y después a descansar. ¡Lo lograste!',
+  ];
+
+  // Cuando ya terminaron
+  const DESPUES = '¡Terminaste tus exámenes! Pase lo que pase, estoy muy orgulloso de ti. Ahora descansa, te lo ganaste 🎉💗';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root {
+    --bg: #f0faf8;
+    --teal: #138a7e;
+    --ink: #20343a;
+    --muted: #61787e;
+    --red: #e8174f;
+    --card: #ffffff;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background:
+      radial-gradient(circle at 15% 10%, #d6f2ec 0, transparent 40%),
+      radial-gradient(circle at 90% 90%, #ffe3ec 0, transparent 45%),
+      var(--bg);
+    color: var(--ink);
+    font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+  main {
+    width: min(100%, 500px); margin: 0 auto; text-align: center;
+    padding: max(24px, env(safe-area-inset-top)) 16px max(30px, env(safe-area-inset-bottom));
+  }
+  .tooth { font-size: 3.4rem; animation: bote 1.6s ease-in-out infinite alternate; display: inline-block; }
+  @keyframes bote { to { transform: translateY(-8px) rotate(6deg); } }
+  h1 { font-family: "Caveat", cursive; color: var(--teal); font-size: clamp(2.2rem, 9vw, 3rem); margin: 4px 0 0; line-height: 1.05; }
+  .fase {
+    display: inline-block; margin: 8px 0 4px; padding: 4px 12px; border-radius: 999px;
+    background: #d4efea; color: var(--teal); font-weight: 700; font-size: .85rem;
+  }
+  .sub { color: var(--muted); margin: 6px 0 16px; }
+
+  .clock { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .unit { background: var(--card); border-radius: 14px; padding: 12px 4px 8px; box-shadow: 0 6px 18px rgba(19,138,126,.12); }
+  .unit b { display: block; font-size: clamp(1.7rem, 8vw, 2.4rem); font-variant-numeric: tabular-nums; line-height: 1; color: var(--ink); }
+  .unit.days b { color: var(--teal); }
+  .unit small { color: var(--muted); font-weight: 700; font-size: .72rem; letter-spacing: .08em; }
+
+  .dias { display: flex; justify-content: center; gap: 6px; margin: 16px 0 0; flex-wrap: wrap; }
+  .dias span {
+    width: 34px; height: 34px; border-radius: 10px; background: var(--card); color: var(--muted);
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .9rem;
+    box-shadow: 0 3px 10px rgba(19,138,126,.1);
+  }
+  .dias span.ok { background: var(--teal); color: #fff; }
+  .dias span.hoy { outline: 3px solid var(--red); outline-offset: -3px; }
+
+  .animo {
+    margin-top: 20px; background: var(--card); border-radius: 16px; padding: 20px 18px;
+    box-shadow: 0 10px 30px rgba(19,138,126,.12); border-top: 5px solid var(--teal);
+    min-height: 130px; display: flex; flex-direction: column; justify-content: center;
+    animation: pop .6s cubic-bezier(.2,1.4,.4,1) .2s backwards;
+  }
+  @keyframes pop { from { transform: scale(.9); opacity: 0; } }
+  .animo small { color: var(--muted); font-weight: 700; letter-spacing: .08em; font-size: .72rem; text-transform: uppercase; }
+  .animo p { font-family: "Caveat", cursive; font-size: clamp(1.55rem, 6.2vw, 1.85rem); margin: 8px 0 0; line-height: 1.2; }
+  .next { color: var(--muted); font-size: .88rem; margin-top: 10px; font-variant-numeric: tabular-nums; }
+  .firma { font-family: "Caveat", cursive; font-size: 1.6rem; color: var(--red); margin-top: 18px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="tooth">🦷</div>
+  <h1 id="titulo"></h1>
+  <div class="fase" id="fase"></div>
+  <p class="sub" id="sub"></p>
+
+  <div class="clock" id="clock">
+    <div class="unit days"><b id="d">0</b><small>DÍAS</small></div>
+    <div class="unit"><b id="h">0</b><small>HORAS</small></div>
+    <div class="unit"><b id="m">0</b><small>MIN</small></div>
+    <div class="unit"><b id="s">0</b><small>SEG</small></div>
+  </div>
+  <div class="dias" id="dias" hidden></div>
+
+  <div class="animo">
+    <small id="fechaHoy"></small>
+    <p id="frase"></p>
+  </div>
+  <div class="next" id="next"></div>
+  <div class="firma" id="firma"></div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('titulo').textContent = '¡Tú puedes, ' + NOMBRE + '!';
+  $('firma').textContent = 'Tu porra oficial, ' + FIRMA + ' 📣';
+
+  const DIA = 86400000;
+  const fecha = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+  const ini = fecha(INICIO_EXAMENES);
+  const fin = fecha(FIN_EXAMENES);
+  const [hh, mm] = HORA_PRIMER_EXAMEN.split(':').map(Number);
+  const primerExamen = new Date(ini.getFullYear(), ini.getMonth(), ini.getDate(), hh, mm);
+  const finTotal = new Date(fin.getFullYear(), fin.getMonth(), fin.getDate() + 1);   // termina a las 12 de la noche del último día
+  const totalDias = Math.round((fin - ini) / DIA) + 1;
+  const pad = x => String(x).padStart(2, '0');
+
+  let diaMostrado = '';
+
+  function hoy() { const h = new Date(); return new Date(h.getFullYear(), h.getMonth(), h.getDate()); }
+
+  // Elige el mensaje de hoy (solo el de hoy; nunca muestra los demás)
+  function mensajeDeHoy() {
+    const h = hoy();
+    if (h < ini) {
+      const faltan = Math.round((ini - h) / DIA);                 // 1 = mañana empiezan
+      return { fase: 'Antes de los exámenes', texto: ANTES[Math.max(0, ANTES.length - faltan)] };
+    }
+    if (h <= fin) {
+      const n = Math.round((h - ini) / DIA);                      // 0 = primer día
+      return { fase: 'Día ' + (n + 1) + ' de ' + totalDias, texto: DURANTE[Math.min(n, DURANTE.length - 1)], n };
+    }
+    return { fase: '¡Terminaste! 🎉', texto: DESPUES, fin: true };
+  }
+
+  function pintarDia() {
+    const m = mensajeDeHoy();
+    $('fase').textContent = m.fase;
+    $('frase').textContent = m.texto;
+    $('fechaHoy').textContent = 'Mensaje de hoy · ' + hoy().toLocaleDateString('es-MX', { weekday: 'long', day: 'numeric', month: 'long' });
+
+    // Cuadritos de los días de exámenes
+    const dias = $('dias');
+    dias.hidden = m.n === undefined && !m.fin;
+    dias.innerHTML = '';
+    for (let k = 0; k < totalDias; k++) {
+      const s = document.createElement('span');
+      const f = new Date(ini.getFullYear(), ini.getMonth(), ini.getDate() + k);
+      s.textContent = f.getDate();
+      if (m.fin || (m.n !== undefined && k < m.n)) s.classList.add('ok');
+      if (m.n === k) s.classList.add('hoy');
+      dias.appendChild(s);
+    }
+    diaMostrado = hoy().toDateString();
+  }
+
+  function tick() {
+    if (hoy().toDateString() !== diaMostrado) pintarDia();   // si cambia el día con la página abierta
+    const now = new Date();
+    let meta, texto;
+    if (now < primerExamen) { meta = primerExamen; texto = 'Para tu primer examen faltan…'; }
+    else if (now < finTotal) { meta = finTotal; texto = 'Para terminar tus exámenes faltan…'; }
+
+    if (!meta) {
+      $('clock').hidden = true;
+      $('sub').textContent = 'Ya puedes descansar 😌';
+      $('next').textContent = '';
+      return;
+    }
+    $('sub').textContent = texto;
+    let diff = meta - now;
+    const d = Math.floor(diff / 86400000); diff -= d * 86400000;
+    const h = Math.floor(diff / 3600000);  diff -= h * 3600000;
+    const m = Math.floor(diff / 60000);    diff -= m * 60000;
+    $('d').textContent = d;
+    $('h').textContent = pad(h);
+    $('m').textContent = pad(m);
+    $('s').textContent = pad(Math.floor(diff / 1000));
+
+    // Cuánto falta para el mensaje de mañana
+    const manana = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+    const r = manana - now;
+    $('next').textContent = 'Mañana te espera otro mensaje · en ' + Math.floor(r / 3600000) + ':' + pad(Math.floor(r / 60000) % 60) + ':' + pad(Math.floor(r / 1000) % 60);
+  }
+
+  pintarDia();
+  tick();
+  setInterval(tick, 1000);
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>
