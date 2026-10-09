@@ -30,11 +30,14 @@
 </script>
 <style>
   :root {
-    --bg: #0f1a12;
-    --gold1: #fff2b3;
-    --gold2: #e6c25a;
-    --gold3: #b8902c;
-    --ink: #3b2a08;
+    --bg: #040a24;
+    --gold1: #fff2c4;
+    --gold2: #f0cf6e;
+    --gold3: #b98d32;
+    --navy1: #12348f;
+    --navy2: #0a1f5c;
+    --navy3: #040b2c;
+    --ink: #f3d27a;
     --text: #f2f6f1;
     --red: #e8174f;
   }
@@ -42,8 +45,10 @@
   html, body { margin: 0; }
   body {
     background:
-      repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 60px, transparent 60px 120px),
-      radial-gradient(circle at 50% 30%, #1f3a24, var(--bg) 70%);
+      radial-gradient(1.5px 1.5px at 12% 18%, #fff, transparent), radial-gradient(1px 1px at 80% 12%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 66% 78%, #fff, transparent), radial-gradient(1px 1px at 25% 70%, #fff, transparent),
+      radial-gradient(1px 1px at 90% 55%, #fff, transparent), radial-gradient(1.5px 1.5px at 40% 92%, #fff, transparent),
+      radial-gradient(circle at 50% 35%, #163a9e, var(--bg) 70%);
     color: var(--text);
     font-family: "Barlow Condensed", system-ui, sans-serif;
     min-height: 100vh;
@@ -66,7 +71,13 @@
     position: absolute; inset: 0;
     backface-visibility: hidden; -webkit-backface-visibility: hidden;
     clip-path: polygon(50% 0, 100% 7%, 100% 88%, 50% 100%, 0 88%, 0 7%);
-    background: linear-gradient(150deg, var(--gold1), var(--gold2) 45%, var(--gold3));
+    background:
+      radial-gradient(2px 2px at 18% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 30% 12%, #fff, transparent),
+      radial-gradient(2px 2px at 82% 64%, #fff, transparent), radial-gradient(1.5px 1.5px at 70% 86%, #fff, transparent),
+      radial-gradient(1.5px 1.5px at 12% 80%, #fff, transparent), radial-gradient(2px 2px at 88% 20%, #fff, transparent),
+      radial-gradient(ellipse at 50% -5%, rgba(140, 200, 255, .75), transparent 55%),
+      repeating-conic-gradient(from 0deg at 50% -10%, rgba(255,255,255,.06) 0 4deg, transparent 4deg 12deg),
+      linear-gradient(170deg, var(--navy1), var(--navy2) 55%, var(--navy3));
     color: var(--ink);
     overflow: hidden;
   }
@@ -82,16 +93,34 @@
   .rating b { font-size: clamp(2.6rem, 13vw, 3.4rem); font-weight: 800; display: block; }
   .rating span { font-size: 1.2rem; font-weight: 800; display: block; }
   .rating i { font-style: normal; font-size: 1.4rem; display: block; margin-top: 4px; }
+  /* La foto ocupa la parte de arriba de la tarjeta y se desvanece hacia la izquierda y hacia abajo,
+     como en las tarjetas de jugadores (sin marco ni óvalo). */
   .photo {
-    position: absolute; top: 9%; right: 8%; width: 58%; aspect-ratio: 1;
+    position: absolute; top: 0; right: 0; width: 76%; height: 58%; z-index: 0;
     display: flex; align-items: flex-end; justify-content: center;
   }
-  .photo .emoji { font-size: clamp(5rem, 26vw, 7rem); line-height: 1; }
-  .photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50% 50% 8px 8px; mask-image: linear-gradient(to bottom, #000 75%, transparent); -webkit-mask-image: linear-gradient(to bottom, #000 75%, transparent); }
+  .photo .emoji { font-size: clamp(5rem, 26vw, 7rem); line-height: 1; margin-bottom: 8%; }
+  .photo img {
+    width: 100%; height: 100%; object-fit: cover; object-position: 50% 35%;
+    filter: grayscale(1) contrast(1.15) brightness(1.08);
+    mix-blend-mode: screen;   /* lo oscuro de la foto se vuelve parte del azul de la tarjeta */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, #000 38%), linear-gradient(to bottom, #000 62%, transparent 100%);
+    -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent 0%, #000 38%), linear-gradient(to bottom, #000 62%, transparent 100%);
+    mask-composite: intersect;
+  }
+  .rating, .name, .stats { z-index: 1; }
+  .marco { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none; }
+  .toty {
+    position: absolute; top: 3.2%; left: 0; right: 0; text-align: center; z-index: 2;
+    font-weight: 800; letter-spacing: .35em; font-size: .8rem; color: var(--gold2);
+    text-shadow: 0 0 8px rgba(240, 207, 110, .8);
+  }
+  .rating b, .name { text-shadow: 0 0 10px rgba(240, 207, 110, .55); }
   .name {
     position: absolute; top: 55%; left: 8%; right: 8%;
     text-align: center; font-weight: 800; font-size: clamp(1.6rem, 8vw, 2.1rem); text-transform: uppercase;
-    border-bottom: 2px solid rgba(59,42,8,.35); padding-bottom: 2px;
+    border-bottom: 2px solid rgba(240,207,110,.55); padding-bottom: 2px;
   }
   .stats {
     position: absolute; top: 69%; left: 12%; right: 12%;
@@ -100,15 +129,16 @@
   }
   .stats div { display: flex; gap: 8px; }
   .stats b { font-weight: 800; min-width: 1.6em; }
-  .stats:before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 2px solid rgba(59,42,8,.3); }
+  .stats:before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 2px solid rgba(240,207,110,.45); }
 
   .back h2 { margin: 0; font-size: 1.6rem; text-transform: uppercase; }
   .back p { font-family: "Caveat", cursive; font-size: clamp(1.4rem, 6vw, 1.7rem); line-height: 1.2; margin: 10px 0; }
   .back ul { list-style: none; padding: 0; margin: 6px 0 0; font-size: 1.05rem; text-align: left; width: 100%; }
-  .back li { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(59,42,8,.3); padding: 2px 0; }
-  .back .firma { font-family: "Caveat", cursive; font-size: 1.4rem; color: var(--red); margin-top: 8px; }
+  .back li { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(240,207,110,.4); padding: 2px 0; }
+  .back .firma { font-family: "Caveat", cursive; font-size: 1.4rem; color: #ff8fb0; margin-top: 8px; }
+  .back p { color: #fff; }
 
-  .hint { margin-top: 16px; color: #a9c2ad; font-size: 1.05rem; letter-spacing: .05em; }
+  .hint { margin-top: 16px; color: #9fb6ec; font-size: 1.05rem; letter-spacing: .05em; }
 
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition: none !important; }
@@ -116,17 +146,20 @@
 </style>
 </head>
 <body>
-  <div class="top">⚽ FICHAJE ESPECIAL ⚽</div>
+  <div class="top">⭐ EQUIPO DEL AÑO ⭐</div>
 
   <div class="scene" id="scene" role="button" tabindex="0" aria-label="Tarjeta de jugadora, toca para voltear">
     <div class="card">
       <div class="face front">
+        <svg class="marco" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,1.4 98.6,8.1 98.6,87.6 50,98.6 1.4,87.6 1.4,8.1" fill="none" stroke="#f0cf6e" stroke-width="2.5" vector-effect="non-scaling-stroke"/><polygon points="50,3.6 96.4,10 96.4,86.3 50,96.4 3.6,86.3 3.6,10" fill="none" stroke="#f0cf6e" stroke-width="1" opacity=".55" vector-effect="non-scaling-stroke"/></svg>
+        <div class="toty">TOTY</div>
         <div class="rating"><b id="media"></b><span id="pos"></span><i id="pais"></i></div>
         <div class="photo" id="photo"></div>
         <div class="name" id="name"></div>
         <div class="stats" id="stats"></div>
       </div>
       <div class="face back">
+        <svg class="marco" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polygon points="50,1.4 98.6,8.1 98.6,87.6 50,98.6 1.4,87.6 1.4,8.1" fill="none" stroke="#f0cf6e" stroke-width="2.5" vector-effect="non-scaling-stroke"/><polygon points="50,3.6 96.4,10 96.4,86.3 50,96.4 3.6,86.3 3.6,10" fill="none" stroke="#f0cf6e" stroke-width="1" opacity=".55" vector-effect="non-scaling-stroke"/></svg>
         <h2>Informe del scout</h2>
         <p id="msg"></p>
         <ul id="detalle"></ul>
