@@ -13,6 +13,7 @@
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
   const VALIDOS_DESDE = 'diciembre 2026';
+  const ESPERA_HORAS = 168;  // después de canjear un vale, cuántas horas hay que esperar para canjear otro (168 = 1 semana)
   const VALES = [
     { emoji: '🤗', titulo: 'Un abrazo largo',        detalle: 'De esos que duran más de 10 segundos. Sin límite de tiempo.' },
     { emoji: '🍦', titulo: 'Un helado',              detalle: 'Del sabor que tú quieras, yo invito.' },
@@ -134,7 +135,9 @@
     width: 100%; border: 0; border-radius: 12px; padding: 13px;
     background: var(--red); color: #fff; font: 700 1rem "Quicksand", sans-serif; cursor: pointer;
   }
-  .big button.reservar.done { background: #ffe0e8; color: var(--red); }
+  .big button.reservar.done { background: #ffe0e8; color: var(--red); cursor: default; }
+  .big button.reservar.confirmar { background: #b8103c; }
+  .aviso { font-size: .85rem; color: var(--muted); margin: 8px 0 0; min-height: 1.2em; font-variant-numeric: tabular-nums; }
   .close {
     position: absolute; top: 8px; right: 10px; border: 0; background: none;
     font-size: 1.6rem; color: var(--muted); cursor: pointer; padding: 6px; line-height: 1;
@@ -179,7 +182,7 @@
 
   <div class="grid" id="grid"></div>
 
-  <p class="nota">Toca un vale para verlo y apartarlo.<br>Para canjearlo, enséñamelo cuando nos veamos 💗</p>
+  <p class="nota" id="nota"></p>
   <p class="nota firma" id="firma"></p>
 </main>
 
@@ -190,6 +193,7 @@
     <h2 id="bigT"></h2>
     <p id="bigD"></p>
     <button class="reservar" id="reservar"></button>
+    <p class="aviso" id="aviso"></p>
     <div class="meta"><span id="bigCode"></span><span id="bigFecha"></span></div>
   </div>
 </div>
@@ -199,10 +203,18 @@
   document.getElementById('sub').textContent = 'Válidos a partir de ' + VALIDOS_DESDE + ' · Sin fecha de caducidad';
   document.getElementById('firma').textContent = 'Con cariño, ' + FIRMA + ' 🐶';
 
-  const KEY = 'vales-snoopy-apartados';
-  function leer() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
-  function guardar(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
-  let apartados = leer();
+  document.getElementById('nota').textContent = 'Toca un vale para verlo. Puedes canjear uno cada ' + ESPERA_HORAS + ' horas, y cada vale solo una vez. Cuando lo canjees, enséñamelo 💗';
+
+  // canjes: { número de vale: cuándo se canjeó } · ultimo: cuándo fue el último canje
+  const KEY = 'vales-snoopy-canjes';
+  const ESPERA = ESPERA_HORAS * 60 * 60 * 1000;
+  let estado = { canjes: {}, ultimo: 0 };
+  try { estado = JSON.parse(localStorage.getItem(KEY)) || estado; } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch (e) {} };
+  const falta = () => Math.max(0, estado.ultimo + ESPERA - Date.now());
+  const pad = x => String(x).padStart(2, '0');
+  const reloj = ms => Math.floor(ms / 3600000) + ':' + pad(Math.floor(ms / 60000) % 60) + ':' + pad(Math.floor(ms / 1000) % 60);
+  const cuando = t => new Date(t).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) + ', ' + new Date(t).toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit' });
 
   const grid = document.getElementById('grid');
   const botones = VALES.map((v, i) => {
@@ -218,24 +230,42 @@
 
   function pintar() {
     botones.forEach((b, i) => {
-      const r = apartados.includes(i);
-      b.classList.toggle('reservado', r);
-      b.querySelector('.tag').textContent = r ? '✓ APARTADO' : 'VALE POR 1';
+      const c = estado.canjes[i];
+      b.classList.toggle('reservado', !!c);
+      b.querySelector('.tag').textContent = c ? '✓ CANJEADO' : 'VALE POR 1';
     });
   }
   pintar();
 
   const overlay = document.getElementById('overlay');
   const reservar = document.getElementById('reservar');
-  let actual = 0;
+  const aviso = document.getElementById('aviso');
+  let actual = 0, confirmando = false;
 
   function pintarBoton() {
-    const r = apartados.includes(actual);
-    reservar.textContent = r ? '✓ Apartado para diciembre' : 'Apartar este vale 💌';
-    reservar.classList.toggle('done', r);
+    const c = estado.canjes[actual];
+    reservar.classList.remove('confirmar');
+    if (c) {
+      reservar.textContent = '✓ Canjeado';
+      reservar.classList.add('done');
+      aviso.textContent = 'Lo canjeaste el ' + cuando(c) + '. ¡Enséñale esta pantalla a ' + FIRMA + '! 💗';
+    } else if (falta() > 0) {
+      reservar.textContent = '⏳ Todavía no puedes canjear otro';
+      reservar.classList.add('done');
+      aviso.textContent = 'Próximo canje disponible en ' + reloj(falta());
+    } else if (confirmando) {
+      reservar.textContent = '¿Segura? Toca otra vez para canjear';
+      reservar.classList.remove('done');
+      reservar.classList.add('confirmar');
+      aviso.textContent = 'Después tendrás que esperar ' + ESPERA_HORAS + ' horas para canjear otro.';
+    } else {
+      reservar.textContent = 'Canjear este vale 💌';
+      reservar.classList.remove('done');
+      aviso.textContent = '';
+    }
   }
   function abrir(i) {
-    actual = i;
+    actual = i; confirmando = false;
     const v = VALES[i];
     document.getElementById('bigE').textContent = v.emoji;
     document.getElementById('bigT').textContent = v.titulo;
@@ -246,11 +276,17 @@
     overlay.classList.add('open');
   }
   reservar.addEventListener('click', () => {
-    apartados = apartados.includes(actual) ? apartados.filter(x => x !== actual) : [...apartados, actual];
-    guardar(apartados);
+    if (estado.canjes[actual] || falta() > 0) return;
+    if (!confirmando) { confirmando = true; return pintarBoton(); }
+    estado.canjes[actual] = Date.now();
+    estado.ultimo = Date.now();
+    confirmando = false;
+    guardar();
     pintarBoton();
     pintar();
   });
+  // Mantiene la cuenta regresiva al día mientras el vale está abierto
+  setInterval(() => { if (overlay.classList.contains('open')) pintarBoton(); }, 1000);
   document.getElementById('close').addEventListener('click', () => overlay.classList.remove('open'));
   overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
 </script>
