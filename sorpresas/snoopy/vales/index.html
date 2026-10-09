@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fff4d6">
+<title>Vales de Snoopy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const VALIDOS_DESDE = 'diciembre 2026';
+  const VALES = [
+    { emoji: '🤗', titulo: 'Un abrazo largo',        detalle: 'De esos que duran más de 10 segundos. Sin límite de tiempo.' },
+    { emoji: '🍦', titulo: 'Un helado',              detalle: 'Del sabor que tú quieras, yo invito.' },
+    { emoji: '🎬', titulo: 'Una peli juntos',        detalle: 'Tú eliges la película y yo llevo las palomitas.' },
+    { emoji: '🏆', titulo: 'Ganar una discusión',    detalle: 'Úsalo con sabiduría: te doy la razón sin decir nada.' },
+    { emoji: '📸', titulo: 'Una sesión de fotos',    detalle: 'Las fotos que quieras, en donde quieras, sin quejarme.' },
+    { emoji: '🍕', titulo: 'Una cena',               detalle: 'Comida a tu elección y plática hasta tarde.' },
+    { emoji: '⚽', titulo: 'Un partido juntos',      detalle: 'Ver un partido de tu equipo, con botanas incluidas.' },
+    { emoji: '💌', titulo: 'Un deseo',               detalle: 'Lo que tú quieras (dentro de lo razonable 😅).' },
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root {
+    --bg: #fff4d6;
+    --bg2: #ffe7a8;
+    --ink: #3a2a1d;
+    --muted: #8a6f55;
+    --red: #e8174f;
+    --paper: #fffdf7;
+    --dash: #e6c98d;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: radial-gradient(circle at 50% 0%, var(--bg), var(--bg2));
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+  main {
+    width: min(100%, 640px);
+    margin: 0 auto;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
+  }
+
+  header { display: flex; align-items: flex-end; gap: 8px; margin-bottom: 10px; }
+  .snoopy { width: 130px; flex-shrink: 0; animation: brinco 1.4s ease-in-out infinite alternate; }
+  @keyframes brinco { to { transform: translateY(-6px); } }
+  .bubble {
+    position: relative;
+    background: #fff; border: 3px solid var(--ink);
+    border-radius: 18px; padding: 12px 14px;
+    font-family: "Caveat", cursive; font-size: clamp(1.25rem, 4.6vw, 1.55rem); line-height: 1.2;
+    margin-bottom: 70px;
+  }
+  .bubble::after {
+    content: ""; position: absolute; left: -14px; bottom: 14px;
+    border: 10px solid transparent; border-right-color: var(--ink);
+  }
+
+  h1 {
+    font-family: "Caveat", cursive; color: var(--red);
+    font-size: clamp(2.4rem, 9vw, 3.2rem); margin: 0; line-height: 1;
+  }
+  .sub { color: var(--muted); margin: 4px 0 22px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .vale {
+    position: relative;
+    background: var(--paper);
+    border: 2px dashed var(--dash);
+    border-radius: 14px;
+    padding: 18px 12px 14px;
+    text-align: center;
+    cursor: pointer;
+    font: inherit; color: inherit;
+    box-shadow: 0 6px 16px rgba(120, 80, 20, .12);
+    transition: transform .2s;
+  }
+  .vale:active { transform: scale(.97); }
+  .vale::before, .vale::after {
+    content: ""; position: absolute; top: 50%; width: 18px; height: 18px;
+    background: var(--bg2); border-radius: 50%; transform: translateY(-50%);
+  }
+  .vale::before { left: -10px; }
+  .vale::after { right: -10px; }
+  .vale .e { font-size: 2.2rem; display: block; }
+  .vale .t { font-weight: 700; display: block; margin-top: 6px; }
+  .vale .tag {
+    display: inline-block; margin-top: 8px; font-size: .75rem; font-weight: 700;
+    color: var(--muted); letter-spacing: .05em;
+  }
+  .vale.reservado { border-color: var(--red); border-style: solid; }
+  .vale.reservado .tag { color: var(--red); }
+
+  /* Vale abierto */
+  .overlay {
+    position: fixed; inset: 0; z-index: 10;
+    background: rgba(58, 42, 29, .5);
+    backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center; padding: 16px;
+    opacity: 0; pointer-events: none; transition: opacity .3s;
+  }
+  .overlay.open { opacity: 1; pointer-events: auto; }
+  .big {
+    position: relative;
+    width: min(100%, 400px);
+    background: var(--paper);
+    border-radius: 18px;
+    padding: 26px 22px 22px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,.25);
+    transform: scale(.8) rotate(-4deg);
+    transition: transform .45s cubic-bezier(.2,1.4,.4,1);
+  }
+  .overlay.open .big { transform: none; }
+  .big .e { font-size: 3.5rem; }
+  .big h2 { font-family: "Caveat", cursive; font-size: 2.3rem; margin: 4px 0; color: var(--red); }
+  .big p { line-height: 1.5; margin: 6px 0 14px; }
+  .big .meta {
+    border-top: 2px dashed var(--dash); padding-top: 12px; margin-top: 8px;
+    display: flex; justify-content: space-between; font-size: .8rem; color: var(--muted); font-weight: 700;
+  }
+  .big button.reservar {
+    width: 100%; border: 0; border-radius: 12px; padding: 13px;
+    background: var(--red); color: #fff; font: 700 1rem "Quicksand", sans-serif; cursor: pointer;
+  }
+  .big button.reservar.done { background: #ffe0e8; color: var(--red); }
+  .close {
+    position: absolute; top: 8px; right: 10px; border: 0; background: none;
+    font-size: 1.6rem; color: var(--muted); cursor: pointer; padding: 6px; line-height: 1;
+  }
+  .nota { text-align: center; color: var(--muted); font-size: .9rem; margin-top: 26px; line-height: 1.5; }
+  .firma { font-family: "Caveat", cursive; font-size: 1.6rem; color: var(--red); }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <svg class="snoopy" viewBox="50 20 160 175" aria-hidden="true">
+      <ellipse cx="108" cy="190" rx="58" ry="5" fill="#000" opacity=".15"/>
+      <path d="M76 158 C62 156 56 144 62 134" fill="none" stroke="#1d1d1f" stroke-width="9" stroke-linecap="round"/>
+      <path d="M76 158 C62 156 56 144 62 134" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/>
+      <path d="M86 100 C70 122 64 152 72 178 L140 178 C146 150 138 120 122 98 Z" fill="#fff" stroke="#1d1d1f" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M118 176 C120 160 128 150 138 148" fill="none" stroke="#1d1d1f" stroke-width="2.5" stroke-linecap="round"/>
+      <ellipse cx="86" cy="181" rx="20" ry="8" fill="#fff" stroke="#1d1d1f" stroke-width="3"/>
+      <ellipse cx="131" cy="182" rx="23" ry="8.5" fill="#fff" stroke="#1d1d1f" stroke-width="3"/>
+      <path d="M84 102 Q103 113 124 100" fill="none" stroke="#e8174f" stroke-width="6" stroke-linecap="round"/>
+      <circle cx="104" cy="110" r="3.5" fill="#ffc83d" stroke="#1d1d1f" stroke-width="1.5"/>
+      <path d="M70 70 C66 40 92 26 118 32 C140 37 160 40 178 44 C196 48 198 72 180 76 C160 80 140 82 126 90 C116 104 90 108 78 98 C70 92 70 82 70 70 Z" fill="#fff" stroke="#1d1d1f" stroke-width="3" stroke-linejoin="round"/>
+      <ellipse cx="185" cy="51" rx="10" ry="8" fill="#1d1d1f" transform="rotate(-12 185 51)"/>
+      <path d="M124 39 Q131 34 139 37" fill="none" stroke="#1d1d1f" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M127 51 Q132 46 137 51" fill="none" stroke="#1d1d1f" stroke-width="3" stroke-linecap="round"/>
+      <ellipse cx="142" cy="66" rx="8" ry="4.5" fill="#ff9db5" opacity=".75"/>
+      <path d="M152 71 Q166 78 181 70" fill="none" stroke="#1d1d1f" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M98 36 C78 30 62 50 62 76 C62 100 68 116 82 116 C96 116 100 100 98 84 C96 66 108 46 98 36 Z" fill="#1d1d1f"/>
+      <path d="M110 126 C118 136 122 144 126 150" fill="none" stroke="#1d1d1f" stroke-width="13" stroke-linecap="round"/>
+      <path d="M110 126 C118 136 122 144 126 150" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round"/>
+      <circle cx="126" cy="150" r="7" fill="#fff" stroke="#1d1d1f" stroke-width="3"/>
+    </svg>
+    <div class="bubble" id="bubble"></div>
+  </header>
+
+  <h1>Vales canjeables</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="grid" id="grid"></div>
+
+  <p class="nota">Toca un vale para verlo y apartarlo.<br>Para canjearlo, enséñamelo cuando nos veamos 💗</p>
+  <p class="nota firma" id="firma"></p>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-label="Vale">
+  <div class="big">
+    <button class="close" id="close" aria-label="Cerrar">×</button>
+    <div class="e" id="bigE"></div>
+    <h2 id="bigT"></h2>
+    <p id="bigD"></p>
+    <button class="reservar" id="reservar"></button>
+    <div class="meta"><span id="bigCode"></span><span id="bigFecha"></span></div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('bubble').textContent = '¡' + NOMBRE + ', estos vales son para cuando nos veamos!';
+  document.getElementById('sub').textContent = 'Válidos a partir de ' + VALIDOS_DESDE + ' · Sin fecha de caducidad';
+  document.getElementById('firma').textContent = 'Con cariño, ' + FIRMA + ' 🐶';
+
+  const KEY = 'vales-snoopy-apartados';
+  function leer() { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) { return []; } }
+  function guardar(v) { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch (e) {} }
+  let apartados = leer();
+
+  const grid = document.getElementById('grid');
+  const botones = VALES.map((v, i) => {
+    const b = document.createElement('button');
+    b.className = 'vale';
+    b.innerHTML = '<span class="e"></span><span class="t"></span><span class="tag"></span>';
+    b.querySelector('.e').textContent = v.emoji;
+    b.querySelector('.t').textContent = v.titulo;
+    b.addEventListener('click', () => abrir(i));
+    grid.appendChild(b);
+    return b;
+  });
+
+  function pintar() {
+    botones.forEach((b, i) => {
+      const r = apartados.includes(i);
+      b.classList.toggle('reservado', r);
+      b.querySelector('.tag').textContent = r ? '✓ APARTADO' : 'VALE POR 1';
+    });
+  }
+  pintar();
+
+  const overlay = document.getElementById('overlay');
+  const reservar = document.getElementById('reservar');
+  let actual = 0;
+
+  function pintarBoton() {
+    const r = apartados.includes(actual);
+    reservar.textContent = r ? '✓ Apartado para diciembre' : 'Apartar este vale 💌';
+    reservar.classList.toggle('done', r);
+  }
+  function abrir(i) {
+    actual = i;
+    const v = VALES[i];
+    document.getElementById('bigE').textContent = v.emoji;
+    document.getElementById('bigT').textContent = v.titulo;
+    document.getElementById('bigD').textContent = v.detalle;
+    document.getElementById('bigCode').textContent = 'SNOOPY-' + String(i + 1).padStart(3, '0');
+    document.getElementById('bigFecha').textContent = 'Desde ' + VALIDOS_DESDE;
+    pintarBoton();
+    overlay.classList.add('open');
+  }
+  reservar.addEventListener('click', () => {
+    apartados = apartados.includes(actual) ? apartados.filter(x => x !== actual) : [...apartados, actual];
+    guardar(apartados);
+    pintarBoton();
+    pintar();
+  });
+  document.getElementById('close').addEventListener('click', () => overlay.classList.remove('open'));
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('open'); });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f13">
+<title>Clasificación</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700;900&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  // De P1 a la última posición. corta: lo que se ve en la tabla. larga: lo que sale al tocarla.
+  const RAZONES = [
+    { corta: 'Su sonrisa',            larga: 'Es lo primero que me viene a la mente cuando pienso en ti.' },
+    { corta: 'Lo inteligente que es', larga: 'Estudiar odontología no es cualquier cosa, y tú lo haces increíble.' },
+    { corta: 'Su paciencia',          larga: 'Por aguantar mis cambios de humor y mis locuras 😅' },
+    { corta: 'Cómo me escucha',       larga: 'Contigo puedo hablar de todo y siempre me entiendes.' },
+    { corta: 'Su risa',               larga: 'Podría escucharla todo el día.' },
+    { corta: 'Que le guste Snoopy',   larga: 'Y que ahora todo me recuerde a ti cuando lo veo 🐶' },
+    { corta: 'Que se anime a la F1',  larga: 'Aunque sea por mí. Eso dice mucho de ti 🏎️' },
+    { corta: 'Su buen gusto musical', larga: 'The Weeknd siempre va a sonar distinto gracias a ti 🎤' },
+    { corta: 'Las llamadas largas',   larga: 'El tiempo se pasa volando cuando hablamos.' },
+    { corta: 'Que es ella',           larga: 'Así, tal cual. No le cambiaría nada.' },
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root {
+    --bg: #0d0f13;
+    --row: #171a21;
+    --row2: #1d212a;
+    --text: #f1f3f6;
+    --muted: #8892a0;
+    --red: #e10600;
+    --gold: #ffcf3f;
+    --purple: #b04cff;
+    --green: #2bd96b;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Titillium Web", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+  main {
+    width: min(100%, 520px); margin: 0 auto;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+  }
+  .head { background: var(--red); padding: 12px 16px; border-radius: 10px 10px 0 0; }
+  .head small { font-weight: 700; letter-spacing: .2em; font-size: .72rem; opacity: .9; }
+  .head h1 { margin: 0; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: clamp(1.3rem, 5.5vw, 1.7rem); line-height: 1.1; }
+  .cols {
+    display: grid; grid-template-columns: 44px 1fr 80px; gap: 8px;
+    background: #22262f; padding: 6px 12px; font-size: .7rem; font-weight: 700; letter-spacing: .12em; color: var(--muted);
+  }
+
+  .row {
+    width: 100%; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer;
+    display: grid; grid-template-columns: 44px 1fr 80px; gap: 8px; align-items: center;
+    padding: 12px; background: var(--row);
+    border-left: 4px solid var(--team, var(--muted));
+    opacity: 0; transform: translateX(-20px);
+    transition: opacity .4s, transform .4s, background .2s;
+  }
+  .row:nth-of-type(even) { background: var(--row2); }
+  .row.on { opacity: 1; transform: none; }
+  .pos { font-weight: 900; font-size: 1.15rem; font-style: italic; }
+  .name { font-weight: 700; font-size: 1.02rem; }
+  .gap { text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); font-size: .9rem; }
+  .row.p1 { background: linear-gradient(90deg, rgba(255,207,63,.18), var(--row)); --team: var(--gold); }
+  .row.p1 .pos, .row.p1 .gap { color: var(--gold); }
+  .detail {
+    display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s ease;
+    background: #11141a; border-left: 4px solid transparent;
+  }
+  .detail.open { grid-template-rows: 1fr; }
+  .detail > div { overflow: hidden; }
+  .detail p { margin: 0; padding: 12px 16px 14px 60px; color: #cfd5de; line-height: 1.5; }
+
+  .pole {
+    margin-top: 16px; background: var(--row); border-radius: 12px; padding: 16px; text-align: center;
+    border: 1px solid rgba(255,207,63,.35);
+    opacity: 0; transition: opacity .6s;
+  }
+  .pole.on { opacity: 1; }
+  .pole .t { font-size: 2.4rem; }
+  .pole b { color: var(--gold); font-style: italic; font-size: 1.3rem; display: block; }
+  .pole span { color: var(--muted); }
+  .hint { color: var(--muted); text-align: center; font-size: .85rem; margin-top: 10px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="head">
+    <small>CLASIFICACIÓN OFICIAL</small>
+    <h1>Razones por las que me encantas</h1>
+  </div>
+  <div class="cols"><span>POS</span><span>RAZÓN</span><span style="text-align:right">INTERVALO</span></div>
+  <div id="tabla"></div>
+  <p class="hint">Toca una posición para ver más</p>
+  <div class="pole" id="pole">
+    <div class="t">🏆</div>
+    <b id="poleName"></b>
+    <span id="poleFirma"></span>
+  </div>
+</main>
+
+<script>
+  const colores = ['#ffcf3f', '#3671c6', '#ff8000', '#27f4d2', '#e8002d', '#229971', '#b6babd', '#6692ff', '#64c4ff', '#52e252'];
+  const tabla = document.getElementById('tabla');
+  const filas = [];
+
+  RAZONES.forEach((r, i) => {
+    const row = document.createElement('button');
+    row.className = 'row' + (i === 0 ? ' p1' : '');
+    row.style.setProperty('--team', colores[i % colores.length]);
+    row.innerHTML = '<span class="pos"></span><span class="name"></span><span class="gap"></span>';
+    row.querySelector('.pos').textContent = 'P' + (i + 1);
+    row.querySelector('.name').textContent = r.corta;
+    row.querySelector('.gap').textContent = i === 0 ? 'LÍDER' : '+0.00' + i;
+    const det = document.createElement('div');
+    det.className = 'detail';
+    det.innerHTML = '<div><p></p></div>';
+    det.querySelector('p').textContent = r.larga;
+    row.addEventListener('click', () => det.classList.toggle('open'));
+    tabla.appendChild(row);
+    tabla.appendChild(det);
+    filas.push(row);
+  });
+
+  // Entran de la última a la primera, como cuando se revela la pole
+  filas.slice().reverse().forEach((f, i) => setTimeout(() => f.classList.add('on'), 300 + i * 220));
+  setTimeout(() => document.getElementById('pole').classList.add('on'), 500 + filas.length * 220);
+
+  document.getElementById('poleName').textContent = 'POLE POSITION: ' + NOMBRE;
+  document.getElementById('poleFirma').textContent = 'Siempre P1 para mí · ' + FIRMA;
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

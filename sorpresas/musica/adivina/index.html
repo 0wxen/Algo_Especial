@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0507">
+<title>Adivina la canción</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@600&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  // pista: emojis · opciones: 4 canciones · correcta: número de la buena (1, 2, 3 o 4)
+  // mensaje: lo que le aparece cuando acierta
+  const PREGUNTAS = [
+    { pista: '🌃🚗💡', opciones: ['Starboy', 'Blinding Lights', 'Out of Time', 'Die For You'], correcta: 2, mensaje: 'Como tus ojos cuando te ríes ✨' },
+    { pista: '⭐👦',   opciones: ['Starboy', 'Earned It', 'The Hills', 'Save Your Tears'], correcta: 1, mensaje: 'Tú eres mi estrella favorita ⭐' },
+    { pista: '😢💧🙈', opciones: ['Call Out My Name', 'Less Than Zero', 'Save Your Tears', 'Sacrifice'], correcta: 3, mensaje: 'Nada de lágrimas, puras sonrisas contigo.' },
+    { pista: '⏰⌛🏃', opciones: ['Out of Time', 'Is There Someone Else?', 'Starboy', 'Snowchild'], correcta: 1, mensaje: 'El tiempo vuela cuando hablamos.' },
+    { pista: '📞🗣️💔', opciones: ['Die For You', 'Call Out My Name', 'Often', 'Wicked Games'], correcta: 2, mensaje: 'Aunque yo siempre te voy a contestar 📱💗' },
+  ];
+  const MENSAJE_FINAL = '¡Eres la fan número 1! Y yo soy fan número 1 de ti 🎤💗';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg: #0a0507; --red: #ff1e3c; --text: #f6e9ec; --muted: #b99aa2; --card: rgba(255,255,255,.05); --ok: #2bd96b; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: radial-gradient(circle at 50% 0, rgba(255,30,60,.3), transparent 55%), var(--bg);
+    color: var(--text); font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+  }
+  main { width: min(100%, 460px); margin: 0 auto; text-align: center; padding: max(24px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom)); }
+  h1 { font-family: "Bebas Neue", sans-serif; font-weight: 400; font-size: clamp(2.4rem, 11vw, 3.4rem); margin: 0; letter-spacing: .03em; text-shadow: 0 0 18px rgba(255,30,60,.6); }
+  .sub { color: var(--muted); margin: 2px 0 18px; }
+  .dots { display: flex; justify-content: center; gap: 6px; margin-bottom: 16px; }
+  .dots i { width: 10px; height: 10px; border-radius: 50%; background: #3a2a2e; }
+  .dots i.ok { background: var(--red); }
+  .pista { font-size: clamp(3.5rem, 18vw, 5rem); margin: 4px 0 18px; animation: pop .5s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop { from { transform: scale(.6); opacity: 0; } }
+  .opts { display: grid; gap: 10px; }
+  .opts button {
+    border: 1px solid rgba(255,255,255,.15); background: var(--card); color: var(--text);
+    border-radius: 12px; padding: 14px; font: 700 1.05rem "Quicksand", sans-serif; cursor: pointer;
+    transition: background .2s, border-color .2s;
+  }
+  .opts button.bien { background: rgba(43,217,107,.2); border-color: var(--ok); }
+  .opts button.mal { animation: shake .4s; border-color: var(--red); }
+  @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+  .msg { min-height: 64px; margin-top: 16px; font-family: "Caveat", cursive; font-size: 1.6rem; line-height: 1.2; }
+  .next { margin-top: 6px; border: 0; background: var(--red); color: #fff; border-radius: 999px; padding: 12px 22px; font: 700 1rem "Quicksand", sans-serif; cursor: pointer; visibility: hidden; }
+  .next.show { visibility: visible; }
+  .final .pista { font-size: 4.5rem; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+<main id="main">
+  <h1>Adivina la canción</h1>
+  <p class="sub" id="sub"></p>
+  <div class="dots" id="dots"></div>
+  <div id="juego"></div>
+  <div class="msg" id="msg"></div>
+  <button class="next" id="next">Siguiente ➜</button>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = 'Versión The Weeknd · para ' + NOMBRE;
+  const dots = PREGUNTAS.map(() => { const d = document.createElement('i'); $('dots').appendChild(d); return d; });
+  let q = 0;
+
+  function mostrar() {
+    const p = PREGUNTAS[q];
+    $('msg').textContent = '';
+    $('next').classList.remove('show');
+    const j = $('juego');
+    j.innerHTML = '<div class="pista"></div><div class="opts"></div>';
+    j.querySelector('.pista').textContent = p.pista;
+    p.opciones.forEach((o, k) => {
+      const b = document.createElement('button');
+      b.textContent = o;
+      b.addEventListener('click', () => responder(b, k + 1));
+      j.querySelector('.opts').appendChild(b);
+    });
+  }
+  function responder(b, k) {
+    const p = PREGUNTAS[q];
+    if ($('next').classList.contains('show')) return;
+    if (k === p.correcta) {
+      b.classList.add('bien');
+      dots[q].classList.add('ok');
+      $('msg').textContent = '¡Sí! ' + p.mensaje;
+      $('next').textContent = q === PREGUNTAS.length - 1 ? 'Ver resultado 🏆' : 'Siguiente ➜';
+      $('next').classList.add('show');
+    } else {
+      b.classList.remove('mal'); void b.offsetWidth; b.classList.add('mal');
+      $('msg').textContent = 'Casi… intenta otra vez 😉';
+    }
+  }
+  $('next').addEventListener('click', () => {
+    q++;
+    if (q < PREGUNTAS.length) return mostrar();
+    $('main').classList.add('final');
+    $('juego').innerHTML = '<div class="pista">🏆</div>';
+    $('msg').textContent = MENSAJE_FINAL + ' — ' + FIRMA;
+    $('next').classList.remove('show');
+  });
+  mostrar();
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

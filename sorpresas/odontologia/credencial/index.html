@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#dfeff0">
+<title>Credencial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const ESPECIALIDAD = 'Sonrisas y corazones';
+  const FOTO = '';          // ej. 'foto.jpg' (en esta misma carpeta). Vacío = emoji
+  const EMOJI = '👩‍⚕️';
+  const VIGENCIA = 'Para siempre';
+  const MENSAJE_QR = 'Acceso autorizado a mi corazón. Sin cita previa, sin horario, sin fecha de vencimiento 💗';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg: #dfeff0; --teal: #138a7e; --teal-d: #0d655c; --ink: #20343a; --muted: #61787e; --red: #e8174f; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: radial-gradient(circle at 50% 0, #fff, var(--bg) 60%); color: var(--ink);
+    font-family: "Quicksand", system-ui, sans-serif; min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  }
+  .lanyard { width: 26px; height: 60px; background: repeating-linear-gradient(180deg, var(--teal) 0 10px, var(--teal-d) 10px 20px); border-radius: 0 0 6px 6px; }
+  .clip { width: 46px; height: 16px; background: #b8c4c6; border-radius: 4px; margin-top: -2px; }
+  .card {
+    width: min(100%, 340px); background: #fff; border-radius: 18px; overflow: hidden; margin-top: -4px;
+    box-shadow: 0 20px 50px rgba(19,138,126,.25);
+    animation: colgar 2.2s ease-in-out infinite alternate; transform-origin: 50% -70px;
+  }
+  @keyframes colgar { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+  .head { background: linear-gradient(135deg, var(--teal), var(--teal-d)); color: #fff; padding: 16px 16px 60px; text-align: center; }
+  .head b { display: block; letter-spacing: .1em; font-size: .85rem; }
+  .head small { opacity: .85; font-size: .75rem; }
+  .body { padding: 18px 18px 14px; text-align: center; }
+  .photo {
+    width: 120px; height: 120px; border-radius: 50%; margin: -58px auto 10px; border: 5px solid #fff;
+    background: #e6f4f1; display: flex; align-items: center; justify-content: center; font-size: 4rem; overflow: hidden;
+    box-shadow: 0 6px 16px rgba(0,0,0,.12);
+  }
+  .photo img { width: 100%; height: 100%; object-fit: cover; }
+  .nombre { font-size: 1.5rem; font-weight: 700; margin: 0; }
+  .esp { color: var(--teal); font-weight: 700; margin: 2px 0 12px; }
+  .datos { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; text-align: left; font-size: .85rem; }
+  .datos small { display: block; color: var(--muted); font-size: .68rem; font-weight: 700; letter-spacing: .08em; }
+  .qr-row { display: flex; align-items: center; gap: 14px; margin-top: 14px; padding-top: 14px; border-top: 1px dashed #c9dcdc; text-align: left; }
+  .qr { width: 86px; height: 86px; flex-shrink: 0; cursor: pointer; border-radius: 6px; padding: 4px; background: #fff; border: 2px solid var(--ink); }
+  .qr:active { transform: scale(.96); }
+  .qr-row span { font-size: .85rem; color: var(--muted); }
+  .qr-row b { color: var(--red); }
+  .msg {
+    width: min(100%, 340px); margin-top: 16px; background: #fff; border-radius: 14px; padding: 14px 16px; text-align: center;
+    font-family: "Caveat", cursive; font-size: 1.6rem; line-height: 1.2; box-shadow: 0 8px 22px rgba(0,0,0,.08);
+    opacity: 0; transform: translateY(10px); transition: opacity .5s, transform .5s;
+  }
+  .msg.show { opacity: 1; transform: none; }
+  .msg .ok { font-family: "Quicksand", sans-serif; font-size: .8rem; color: #1a9b50; font-weight: 700; letter-spacing: .08em; }
+  .msg .firma { color: var(--red); font-size: 1.3rem; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+  <div class="lanyard"></div><div class="clip"></div>
+  <div class="card">
+    <div class="head"><b>FACULTAD DE ODONTOLOGÍA</b><small>Hospital del Corazón · Personal autorizado</small></div>
+    <div class="body">
+      <div class="photo" id="photo"></div>
+      <p class="nombre" id="nombre"></p>
+      <p class="esp" id="esp"></p>
+      <div class="datos">
+        <div><small>NO. DE EMPLEADA</small>0001</div>
+        <div><small>VIGENCIA</small><span id="vig"></span></div>
+        <div><small>ÁREA</small>Consultorio 💗</div>
+        <div><small>AUTORIZA</small><span id="aut"></span></div>
+      </div>
+      <div class="qr-row">
+        <svg class="qr" id="qr" viewBox="0 0 21 21" shape-rendering="crispEdges" role="button" tabindex="0" aria-label="Escanear código"></svg>
+        <span><b>Escanea aquí</b><br>(tócalo) para validar tu acceso</span>
+      </div>
+    </div>
+  </div>
+  <div class="msg" id="msg"><div class="ok">✓ ACCESO VERIFICADO</div><div id="texto"></div><div class="firma" id="firma"></div></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('nombre').textContent = 'Dra. ' + NOMBRE;
+  $('esp').textContent = 'Especialista en ' + ESPECIALIDAD;
+  $('vig').textContent = VIGENCIA;
+  $('aut').textContent = FIRMA;
+  $('texto').textContent = MENSAJE_QR;
+  $('firma').textContent = '— ' + FIRMA;
+  if (FOTO) { const i = document.createElement('img'); i.src = FOTO; i.alt = NOMBRE; $('photo').appendChild(i); }
+  else $('photo').textContent = EMOJI;
+
+  // Código decorativo con forma de QR
+  const qr = $('qr');
+  let seed = 7;
+  const rnd = () => (seed = (seed * 9301 + 49297) % 233280) / 233280;
+  let html = '';
+  const esquina = (x, y) => html += `<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3"/>`;
+  for (let y = 0; y < 21; y++) for (let x = 0; x < 21; x++) {
+    const enEsquina = (x < 8 && y < 8) || (x > 12 && y < 8) || (x < 8 && y > 12);
+    if (!enEsquina && rnd() > .5) html += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+  }
+  esquina(0, 0); esquina(14, 0); esquina(0, 14);
+  qr.innerHTML = '<g fill="#20343a">' + html + '</g>';
+
+  const validar = () => $('msg').classList.add('show');
+  qr.addEventListener('click', validar);
+  qr.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); validar(); } });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

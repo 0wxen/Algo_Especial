@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101418">
+<title>Pit stop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700;900&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const MENSAJE = 'Pit stop perfecto. Igual que tú: rápida, inteligente y sin errores 💗';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg: #101418; --panel: #1a2027; --text: #eef2f6; --muted: #8b97a5; --red: #e10600; --green: #2bd96b; --purple: #b04cff; --gold: #ffcf3f; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--text); font-family: "Titillium Web", system-ui, sans-serif;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+  }
+  main { width: min(100%, 460px); margin: 0 auto; text-align: center; padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom)); }
+  small.k { color: var(--red); font-weight: 900; letter-spacing: .2em; font-size: .75rem; }
+  h1 { margin: 0; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: clamp(2rem, 9vw, 2.6rem); line-height: 1; }
+  .sub { color: var(--muted); margin: 4px 0 10px; }
+  .timer { font-size: clamp(2.6rem, 13vw, 3.6rem); font-weight: 900; font-variant-numeric: tabular-nums; font-style: italic; }
+  .timer.done { color: var(--purple); }
+  .pit {
+    position: relative; margin: 8px auto 0; width: min(80vw, 300px); aspect-ratio: 3 / 4;
+    background: repeating-linear-gradient(90deg, #262c34 0 48%, #ffd400 48% 52%, #262c34 52% 100%); border-radius: 14px;
+  }
+  svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .tire { cursor: pointer; }
+  .tire rect { fill: #3a3f46; stroke: #111; stroke-width: 2; transition: fill .2s; }
+  .tire .band { fill: none; stroke: #666; stroke-width: 3; transition: stroke .2s; }
+  .tire.new rect { fill: #151515; }
+  .tire.new .band { stroke: var(--red); }
+  .tire.pop { animation: pop .3s ease-out; transform-box: fill-box; transform-origin: center; }
+  @keyframes pop { 50% { transform: scale(1.18); } }
+  .hint { color: var(--muted); margin-top: 10px; }
+  .card {
+    margin-top: 14px; background: var(--panel); border-radius: 12px; padding: 14px 16px; border-left: 5px solid var(--purple);
+    text-align: left; opacity: 0; transform: translateY(10px); transition: opacity .5s, transform .5s;
+  }
+  .card.show { opacity: 1; transform: none; }
+  .card b { color: var(--purple); letter-spacing: .1em; font-size: .8rem; }
+  .card p { margin: 6px 0 0; font-size: 1.1rem; line-height: 1.45; }
+  .again { margin-top: 12px; border: 0; background: var(--red); color: #fff; border-radius: 10px; padding: 12px 18px; font: 900 1rem "Titillium Web", sans-serif; text-transform: uppercase; cursor: pointer; display: none; }
+  .again.show { display: inline-block; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <small class="k">BOXES · BOXES</small>
+  <h1>Pit stop</h1>
+  <p class="sub" id="sub"></p>
+  <div class="timer" id="timer">0.00</div>
+
+  <div class="pit">
+    <svg viewBox="0 0 300 400" aria-label="Carro visto desde arriba, toca las 4 llantas">
+      <!-- carro visto desde arriba -->
+      <rect x="132" y="28" width="36" height="14" rx="3" fill="#e10600"/>
+      <rect x="92" y="30" width="116" height="12" rx="4" fill="#e10600"/>
+      <path d="M135 42 L165 42 L178 150 L190 260 L184 340 L116 340 L110 260 L122 150 Z" fill="#e10600" stroke="#7a0300" stroke-width="2"/>
+      <ellipse cx="150" cy="200" rx="16" ry="26" fill="#111"/>
+      <circle cx="150" cy="196" r="9" fill="#ffcf3f"/>
+      <rect x="86" y="348" width="128" height="16" rx="4" fill="#e10600"/>
+      <g id="tires"></g>
+    </svg>
+  </div>
+  <p class="hint" id="hint">Toca las 4 llantas lo más rápido que puedas 🛞</p>
+
+  <div class="card" id="card"><b>RADIO DEL EQUIPO</b><p id="msg"></p></div>
+  <button class="again" id="again">Intentar otra vez</button>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = 'Piloto: ' + NOMBRE;
+  $('msg').textContent = MENSAJE + ' — ' + FIRMA;
+  const pos = [[72, 80], [228, 80], [72, 290], [228, 290]];
+  const NS = 'http://www.w3.org/2000/svg';
+  let cambiadas = 0, t0 = 0, raf = 0;
+  const llantas = pos.map(([x, y]) => {
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('class', 'tire');
+    g.innerHTML = `<rect x="${x - 26}" y="${y - 40}" width="52" height="80" rx="10"/><path class="band" d="M${x - 20} ${y - 40} V${y + 40} M${x + 20} ${y - 40} V${y + 40}"/>`;
+    g.addEventListener('click', () => cambiar(g));
+    $('tires').appendChild(g);
+    return g;
+  });
+  function correr() { $('timer').textContent = ((performance.now() - t0) / 1000).toFixed(2); raf = requestAnimationFrame(correr); }
+  function cambiar(g) {
+    if (g.classList.contains('new')) return;
+    if (cambiadas === 0) { t0 = performance.now(); correr(); }
+    g.classList.add('new', 'pop');
+    cambiadas++;
+    if (cambiadas === 4) {
+      cancelAnimationFrame(raf);
+      const s = ((performance.now() - t0) / 1000).toFixed(2);
+      $('timer').textContent = s + ' s';
+      $('timer').classList.add('done');
+      $('hint').textContent = '🟣 ¡Récord personal! ¡Vamos, vamos!';
+      $('card').classList.add('show');
+      $('again').classList.add('show');
+    }
+  }
+  $('again').addEventListener('click', () => {
+    cambiadas = 0;
+    llantas.forEach(l => l.classList.remove('new', 'pop'));
+    $('timer').textContent = '0.00'; $('timer').classList.remove('done');
+    $('hint').textContent = 'Toca las 4 llantas lo más rápido que puedas 🛞';
+    $('again').classList.remove('show');
+  });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

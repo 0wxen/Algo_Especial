@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0507">
+<title>Concierto privado</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const DEDICATORIA = 'Un escenario, unas luces y una sola persona en la lista de invitados: tú.';
+  const FIRMA = 'Owen';
+
+  // frase: por qué esa canción te recuerda a ella.
+  // spotify: pega el enlace de la canción (si lo dejas vacío, abre la búsqueda).
+  const CANCIONES = [
+    { titulo: 'Blinding Lights',   frase: 'Porque desde que apareciste, todo se ve un poquito más brillante.', spotify: '' },
+    { titulo: 'Die For You',       frase: 'Porque aunque estemos lejos, siempre voy a estar para ti.',        spotify: '' },
+    { titulo: 'I Feel It Coming',  frase: 'Porque siento que lo mejor todavía está por venir.',               spotify: '' },
+    { titulo: 'Out of Time',       frase: 'Porque contigo el tiempo se me pasa volando.',                     spotify: '' },
+    { titulo: 'Save Your Tears',   frase: 'Porque tus sonrisas valen más que cualquier lágrima.',             spotify: '' },
+    { titulo: 'Starboy',           frase: 'Porque tú eres la estrella de este concierto ⭐',                  spotify: '' },
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root {
+    --bg: #0a0507;
+    --red: #ff1e3c;
+    --red-soft: rgba(255, 30, 60, .18);
+    --text: #f6e9ec;
+    --muted: #b99aa2;
+    --card: rgba(255, 255, 255, .04);
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  /* Luces del escenario */
+  .lights { position: fixed; inset: 0; pointer-events: none; opacity: 0; transition: opacity 2s; z-index: 0; }
+  body.on .lights { opacity: 1; }
+  .beam {
+    position: absolute; top: -10vh; width: 60vw; height: 130vh;
+    background: linear-gradient(to bottom, rgba(255,30,60,.35), rgba(255,30,60,0) 75%);
+    clip-path: polygon(45% 0, 55% 0, 100% 100%, 0 100%);
+    filter: blur(6px);
+    transform-origin: 50% 0;
+    mix-blend-mode: screen;
+  }
+  .beam.l { left: -10vw; animation: barrer 6s ease-in-out infinite alternate; }
+  .beam.r { right: -10vw; animation: barrer 7s ease-in-out infinite alternate-reverse; }
+  @keyframes barrer { from { transform: rotate(-18deg); } to { transform: rotate(18deg); } }
+  .haze {
+    position: absolute; inset: auto 0 0 0; height: 40vh;
+    background: radial-gradient(ellipse at 50% 100%, rgba(255,30,60,.25), transparent 70%);
+  }
+
+  main {
+    position: relative; z-index: 1;
+    width: min(100%, 560px);
+    margin: 0 auto;
+    padding: max(28px, env(safe-area-inset-top)) 16px max(32px, env(safe-area-inset-bottom));
+  }
+
+  .live {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: 1px solid var(--red); color: var(--red);
+    border-radius: 999px; padding: 4px 12px;
+    font-weight: 700; font-size: .8rem; letter-spacing: .15em;
+  }
+  .live::before {
+    content: ""; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--red); animation: parpadeo 1s infinite;
+  }
+  @keyframes parpadeo { 50% { opacity: .2; } }
+
+  h1 {
+    font-family: "Bebas Neue", sans-serif;
+    font-weight: 400;
+    font-size: clamp(3.2rem, 15vw, 5.2rem);
+    line-height: .9;
+    margin: 18px 0 4px;
+    letter-spacing: .02em;
+    color: var(--text);
+    text-shadow: 0 0 18px rgba(255,30,60,.7), 0 0 42px rgba(255,30,60,.45);
+  }
+  .para { font-family: "Bebas Neue", sans-serif; font-size: 1.8rem; color: var(--red); letter-spacing: .05em; }
+  .dedicatoria { color: var(--muted); line-height: 1.6; margin: 8px 0 28px; }
+
+  .setlist-title {
+    font-family: "Bebas Neue", sans-serif; letter-spacing: .25em;
+    color: var(--muted); font-size: 1.1rem;
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    padding-bottom: 8px; margin-bottom: 10px;
+  }
+
+  .song { border-bottom: 1px solid rgba(255,255,255,.07); }
+  .song button {
+    width: 100%; background: none; border: 0; color: inherit;
+    display: flex; align-items: center; gap: 14px;
+    padding: 16px 4px; cursor: pointer; text-align: left;
+    font: inherit;
+  }
+  .num { font-family: "Bebas Neue", sans-serif; font-size: 1.4rem; color: var(--red); width: 28px; }
+  .titulo { flex: 1; font-weight: 700; font-size: 1.1rem; }
+  .icon { color: var(--muted); transition: transform .3s; }
+  .song.open .icon { transform: rotate(90deg); color: var(--red); }
+
+  .panel {
+    display: grid; grid-template-rows: 0fr;
+    transition: grid-template-rows .4s ease;
+  }
+  .song.open .panel { grid-template-rows: 1fr; }
+  .panel > div { overflow: hidden; }
+  .panel-inner {
+    margin: 0 4px 16px 42px;
+    padding: 14px 16px;
+    background: var(--card);
+    border-left: 3px solid var(--red);
+    border-radius: 0 10px 10px 0;
+  }
+  .frase { margin: 0 0 12px; line-height: 1.6; }
+  .eq { display: inline-flex; align-items: flex-end; gap: 3px; height: 16px; margin-right: 10px; vertical-align: middle; }
+  .eq i { width: 3px; background: var(--red); border-radius: 2px; animation: eq .8s ease-in-out infinite alternate; }
+  .eq i:nth-child(2) { animation-delay: .2s; }
+  .eq i:nth-child(3) { animation-delay: .4s; }
+  .eq i:nth-child(4) { animation-delay: .1s; }
+  @keyframes eq { from { height: 3px; } to { height: 16px; } }
+  .spotify {
+    display: inline-flex; align-items: center;
+    color: var(--bg); background: var(--red);
+    text-decoration: none; font-weight: 700; font-size: .9rem;
+    padding: 8px 14px; border-radius: 999px;
+  }
+
+  footer {
+    text-align: center; margin-top: 36px; color: var(--muted);
+    font-family: "Bebas Neue", sans-serif; letter-spacing: .1em; font-size: 1.3rem;
+  }
+  footer b { color: var(--red); font-weight: 400; }
+
+  /* Entrada */
+  .gate {
+    position: fixed; inset: 0; z-index: 5;
+    background: #000;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; cursor: pointer; text-align: center; padding: 16px;
+    transition: opacity 1.2s;
+  }
+  .gate.out { opacity: 0; pointer-events: none; }
+  .gate .ticket { font-size: 4rem; animation: flotar 2s ease-in-out infinite alternate; }
+  @keyframes flotar { to { transform: translateY(-10px) rotate(-6deg); } }
+  .gate p { font-family: "Bebas Neue", sans-serif; letter-spacing: .2em; font-size: 1.5rem; margin: 0; color: var(--text); }
+  .gate small { color: var(--muted); }
+
+  main > * { opacity: 0; transform: translateY(14px); transition: opacity .8s, transform .8s; }
+  body.on main > * { opacity: 1; transform: none; }
+  body.on main > *:nth-child(2) { transition-delay: .3s; }
+  body.on main > *:nth-child(3) { transition-delay: .5s; }
+  body.on main > *:nth-child(4) { transition-delay: .7s; }
+  body.on main > *:nth-child(5) { transition-delay: .9s; }
+  body.on main > *:nth-child(6) { transition-delay: 1.1s; }
+  body.on main > *:nth-child(7) { transition-delay: 1.3s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="lights" aria-hidden="true">
+  <div class="beam l"></div>
+  <div class="beam r"></div>
+  <div class="haze"></div>
+</div>
+
+<div class="gate" id="gate" role="button" tabindex="0">
+  <div class="ticket">🎟️</div>
+  <p>Toca para entrar</p>
+  <small>Acceso exclusivo · 1 invitada</small>
+</div>
+
+<main>
+  <span class="live">EN VIVO</span>
+  <h1>Concierto<br>privado</h1>
+  <div class="para" id="para"></div>
+  <p class="dedicatoria" id="dedicatoria"></p>
+  <div class="setlist-title">SETLIST DE ESTA NOCHE</div>
+  <div id="setlist"></div>
+  <footer>Gracias por venir 🖤 <b id="firma"></b></footer>
+</main>
+
+<script>
+  document.getElementById('para').textContent = 'para ' + NOMBRE;
+  document.getElementById('dedicatoria').textContent = DEDICATORIA;
+  document.getElementById('firma').textContent = '— ' + FIRMA;
+
+  const setlist = document.getElementById('setlist');
+  CANCIONES.forEach((c, i) => {
+    const url = c.spotify || 'https://open.spotify.com/search/' + encodeURIComponent(c.titulo + ' The Weeknd');
+    const el = document.createElement('div');
+    el.className = 'song';
+    el.innerHTML = `
+      <button aria-expanded="false">
+        <span class="num">${String(i + 1).padStart(2, '0')}</span>
+        <span class="titulo"></span>
+        <span class="icon">▶</span>
+      </button>
+      <div class="panel"><div>
+        <div class="panel-inner">
+          <p class="frase"></p>
+          <span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <a class="spotify" target="_blank" rel="noopener">Escuchar en Spotify</a>
+        </div>
+      </div></div>`;
+    el.querySelector('.titulo').textContent = c.titulo;
+    el.querySelector('.frase').textContent = c.frase;
+    el.querySelector('.spotify').href = url;
+    const btn = el.querySelector('button');
+    btn.addEventListener('click', () => {
+      const abierta = el.classList.toggle('open');
+      btn.setAttribute('aria-expanded', abierta);
+    });
+    setlist.appendChild(el);
+  });
+
+  const gate = document.getElementById('gate');
+  function entrar() {
+    gate.classList.add('out');
+    document.body.classList.add('on');
+  }
+  gate.addEventListener('click', entrar);
+  gate.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') entrar(); });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

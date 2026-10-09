@@ -224,6 +224,17 @@ Owen 🐶`;
   }
   .seal { text-align: right; font-size: 2rem; margin-top: 8px; }
 
+  /* Botón al menú de sorpresas */
+  .more {
+    display: inline-block; margin-top: 14px; z-index: 1;
+    background: #fff; color: var(--accent); text-decoration: none;
+    font: 700 1rem "Quicksand", sans-serif; padding: 12px 18px; border-radius: 999px;
+    box-shadow: 0 6px 18px rgba(200, 0, 60, .25);
+    opacity: 0; transition: opacity .6s;
+  }
+  .ready ~ .more { opacity: 1; }
+  .paper .more { opacity: 1; display: block; text-align: center; margin: 14px auto 0; width: fit-content; background: var(--accent); color: #fff; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; }
   }
@@ -344,6 +355,7 @@ Owen 🐶`;
   </svg>
 </div>
 <div class="hint" id="hint">Toca la carta 💌</div>
+<a class="more" href="sorpresas/index.html">Ver más sorpresas para ti 💝</a>
 
 <!-- Carta abierta -->
 <div class="overlay" id="letterOverlay" role="dialog" aria-modal="true" aria-label="Carta">
@@ -351,6 +363,7 @@ Owen 🐶`;
     <button class="close" id="closeLetter" aria-label="Cerrar">×</button>
     <p class="msg" id="msg"></p>
     <div class="seal">🐶💌</div>
+    <a class="more" href="sorpresas/index.html">Ver más sorpresas 💝</a>
   </div>
 </div>
 

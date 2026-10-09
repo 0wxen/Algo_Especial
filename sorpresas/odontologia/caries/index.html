@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#dff3ff">
+<title>Dientito feliz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const MENSAJE = 'Dejaste ese dientito brillando ✨ Vas a ser la mejor dentista del mundo, y yo voy a ser tu fan número uno 🦷💗';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root {
+    --bg1: #dff3ff;
+    --bg2: #f3e8ff;
+    --ink: #24324a;
+    --muted: #66738c;
+    --teal: #19a59a;
+    --red: #e8174f;
+    --caries: #7a4a22;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: linear-gradient(160deg, var(--bg1), var(--bg2));
+    color: var(--ink);
+    font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    overflow-x: hidden;
+    text-align: center;
+  }
+  h1 { font-family: "Caveat", cursive; color: var(--teal); font-size: clamp(2.2rem, 9vw, 3rem); margin: 0; line-height: 1.05; }
+  .sub { color: var(--muted); margin: 4px 0 8px; }
+  .counter {
+    display: inline-block; background: #fff; border-radius: 999px; padding: 6px 16px;
+    font-weight: 700; box-shadow: 0 4px 14px rgba(36,50,74,.1);
+  }
+  .counter b { color: var(--red); }
+
+  .stage { width: min(88vw, 360px); margin: 10px auto 0; position: relative; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  #tooth { transform-origin: 100px 120px; }
+  .done #tooth { animation: feliz .6s ease-in-out 3 alternate; }
+  @keyframes feliz { to { transform: rotate(4deg) scale(1.03); } }
+
+  .caries { cursor: pointer; transform-box: fill-box; transform-origin: center; transition: transform .35s ease, opacity .35s; }
+  .caries.clean { transform: scale(0); opacity: 0; pointer-events: none; }
+  .spark { pointer-events: none; font-size: 18px; animation: spark .8s ease-out forwards; }
+  @keyframes spark { from { opacity: 1; transform: translateY(0); } to { opacity: 0; transform: translateY(-24px); } }
+
+  .sad { transition: opacity .3s; }
+  .happy { opacity: 0; transition: opacity .3s; }
+  .done .sad { opacity: 0; }
+  .done .happy { opacity: 1; }
+  .shine { opacity: 0; transition: opacity .5s .2s; }
+  .done .shine { opacity: 1; }
+
+  .msg {
+    margin-top: 14px; width: min(100%, 420px);
+    background: #fff; border-radius: 16px; padding: 18px;
+    box-shadow: 0 10px 30px rgba(36,50,74,.12);
+    font-family: "Caveat", cursive; font-size: 1.55rem; line-height: 1.25;
+    opacity: 0; transform: translateY(16px); transition: opacity .6s, transform .6s;
+  }
+  .msg.show { opacity: 1; transform: none; }
+  .msg .firma { color: var(--red); margin-top: 6px; }
+  .hint { color: var(--muted); font-size: .9rem; margin-top: 8px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <h1 id="titulo"></h1>
+  <p class="sub">Este dientito necesita a su doctora 🦷</p>
+  <div class="counter">Caries: <b id="left">0</b></div>
+
+  <div class="stage" id="stage">
+    <svg viewBox="0 0 200 230" role="img" aria-label="Un diente con caries para limpiar">
+      <g id="tooth">
+        <path d="M40 44 C38 12 80 10 100 26 C120 10 162 12 160 44 C164 84 150 104 148 134 C145 174 136 210 121 210 C105 210 108 156 100 156 C92 156 95 210 79 210 C64 210 55 174 52 134 C50 104 36 84 40 44 Z"
+              fill="#fff" stroke="#24324a" stroke-width="4" stroke-linejoin="round"/>
+        <path d="M56 46 C56 30 74 26 86 34" fill="none" stroke="#cfe6f5" stroke-width="7" stroke-linecap="round"/>
+        <!-- cara -->
+        <ellipse cx="78" cy="92" rx="5" ry="7" fill="#24324a"/>
+        <ellipse cx="122" cy="92" rx="5" ry="7" fill="#24324a"/>
+        <ellipse cx="68" cy="108" rx="8" ry="4.5" fill="#ff9db5" opacity=".7"/>
+        <ellipse cx="132" cy="108" rx="8" ry="4.5" fill="#ff9db5" opacity=".7"/>
+        <path class="sad" d="M88 118 Q100 110 112 118" fill="none" stroke="#24324a" stroke-width="3.5" stroke-linecap="round"/>
+        <path class="happy" d="M86 112 Q100 128 114 112" fill="none" stroke="#24324a" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- brillitos -->
+        <g class="shine" font-size="20">
+          <text x="150" y="30">✨</text><text x="18" y="70">✨</text><text x="160" y="120">✨</text>
+        </g>
+      </g>
+      <g id="cariesGroup"></g>
+      <g id="sparks"></g>
+    </svg>
+  </div>
+  <p class="hint" id="hint">Toca las manchitas cafés para limpiarlas</p>
+
+  <div class="msg" id="msg"><div id="msgText"></div><div class="firma" id="firma"></div></div>
+
+<script>
+  document.getElementById('titulo').textContent = 'Doctora ' + NOMBRE;
+  document.getElementById('msgText').textContent = MENSAJE;
+  document.getElementById('firma').textContent = '— ' + FIRMA;
+
+  const SVGNS = 'http://www.w3.org/2000/svg';
+  const posiciones = [[70, 52], [128, 50], [100, 72], [64, 142], [134, 140], [80, 182]];
+  const group = document.getElementById('cariesGroup');
+  const sparks = document.getElementById('sparks');
+  let quedan = posiciones.length;
+  const left = document.getElementById('left');
+  left.textContent = quedan;
+
+  posiciones.forEach(([x, y], i) => {
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'caries');
+    const r = 8 + (i % 3) * 2;
+    g.innerHTML = `
+      <circle cx="${x}" cy="${y}" r="${r + 10}" fill="transparent"/>
+      <path d="M${x - r} ${y} C${x - r} ${y - r * 1.1} ${x + r * .6} ${y - r * 1.2} ${x + r} ${y - r * .2}
+               C${x + r * 1.2} ${y + r * .9} ${x - r * .2} ${y + r * 1.2} ${x - r} ${y} Z" fill="var(--caries)" opacity=".85"/>
+      <circle cx="${x + r * .2}" cy="${y - r * .2}" r="${r * .35}" fill="#4a2a10"/>`;
+    g.addEventListener('click', () => limpiar(g, x, y));
+    group.appendChild(g);
+  });
+
+  function limpiar(g, x, y) {
+    if (g.classList.contains('clean')) return;
+    g.classList.add('clean');
+    const s = document.createElementNS(SVGNS, 'text');
+    s.setAttribute('x', x - 9); s.setAttribute('y', y + 6);
+    s.setAttribute('class', 'spark');
+    s.textContent = '✨';
+    sparks.appendChild(s);
+    setTimeout(() => s.remove(), 900);
+    quedan--;
+    left.textContent = quedan;
+    if (quedan === 0) {
+      document.getElementById('stage').classList.add('done');
+      document.getElementById('hint').textContent = '¡Dientito sano y feliz!';
+      setTimeout(() => document.getElementById('msg').classList.add('show'), 500);
+    }
+  }
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

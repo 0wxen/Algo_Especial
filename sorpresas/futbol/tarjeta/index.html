@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1a12">
+<title>Tarjeta de jugadora</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const MEDIA = 99;
+  const POSICION = 'DRA';                 // posición en la cancha 😄
+  const PAIS = '🇲🇽';
+  const FOTO = '';                        // ej. 'foto.jpg' (en esta misma carpeta). Vacío = emoji
+  const EMOJI = '🥰';
+  const STATS = [
+    ['SON', 99, 'Sonrisa'],
+    ['INT', 98, 'Inteligencia'],
+    ['PAC', 97, 'Paciencia'],
+    ['CAR', 99, 'Cariño'],
+    ['HUM', 96, 'Humor'],
+    ['EST', 98, 'Estilo'],
+  ];
+  const MENSAJE_REVERSO = 'Fichaje del año. No hay cláusula de rescisión que me haga dejarte ir ⚽💗';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root {
+    --bg: #0f1a12;
+    --gold1: #fff2b3;
+    --gold2: #e6c25a;
+    --gold3: #b8902c;
+    --ink: #3b2a08;
+    --text: #f2f6f1;
+    --red: #e8174f;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.03) 0 60px, transparent 60px 120px),
+      radial-gradient(circle at 50% 30%, #1f3a24, var(--bg) 70%);
+    color: var(--text);
+    font-family: "Barlow Condensed", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: max(20px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    overflow-x: hidden;
+  }
+  .top { text-align: center; margin-bottom: 14px; letter-spacing: .2em; font-weight: 800; color: var(--gold2); font-size: .9rem; }
+
+  .scene { width: min(78vw, 320px); aspect-ratio: 3 / 4.4; perspective: 1200px; cursor: pointer; }
+  .card {
+    position: relative; width: 100%; height: 100%;
+    transform-style: preserve-3d; transition: transform .9s cubic-bezier(.3,1.3,.5,1);
+    animation: entrar 1.2s cubic-bezier(.2,1.2,.4,1) backwards;
+  }
+  @keyframes entrar { from { transform: rotateY(-540deg) scale(.4); opacity: 0; } }
+  .scene.flip .card { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    clip-path: polygon(50% 0, 100% 7%, 100% 88%, 50% 100%, 0 88%, 0 7%);
+    background: linear-gradient(150deg, var(--gold1), var(--gold2) 45%, var(--gold3));
+    color: var(--ink);
+    overflow: hidden;
+  }
+  .face::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%);
+    transform: translateX(-120%); animation: brillo 3.5s ease-in-out 1.4s infinite;
+  }
+  @keyframes brillo { 45%, 100% { transform: translateX(120%); } }
+  .back { transform: rotateY(180deg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 30px 26px; text-align: center; }
+
+  .rating { position: absolute; top: 13%; left: 12%; text-align: center; line-height: .9; }
+  .rating b { font-size: clamp(2.6rem, 13vw, 3.4rem); font-weight: 800; display: block; }
+  .rating span { font-size: 1.2rem; font-weight: 800; display: block; }
+  .rating i { font-style: normal; font-size: 1.4rem; display: block; margin-top: 4px; }
+  .photo {
+    position: absolute; top: 9%; right: 8%; width: 58%; aspect-ratio: 1;
+    display: flex; align-items: flex-end; justify-content: center;
+  }
+  .photo .emoji { font-size: clamp(5rem, 26vw, 7rem); line-height: 1; }
+  .photo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50% 50% 8px 8px; mask-image: linear-gradient(to bottom, #000 75%, transparent); -webkit-mask-image: linear-gradient(to bottom, #000 75%, transparent); }
+  .name {
+    position: absolute; top: 55%; left: 8%; right: 8%;
+    text-align: center; font-weight: 800; font-size: clamp(1.6rem, 8vw, 2.1rem); text-transform: uppercase;
+    border-bottom: 2px solid rgba(59,42,8,.35); padding-bottom: 2px;
+  }
+  .stats {
+    position: absolute; top: 69%; left: 12%; right: 12%;
+    display: grid; grid-template-columns: 1fr 1fr; column-gap: 18px; row-gap: 2px;
+    font-size: clamp(1.05rem, 5vw, 1.3rem);
+  }
+  .stats div { display: flex; gap: 8px; }
+  .stats b { font-weight: 800; min-width: 1.6em; }
+  .stats:before { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; border-left: 2px solid rgba(59,42,8,.3); }
+
+  .back h2 { margin: 0; font-size: 1.6rem; text-transform: uppercase; }
+  .back p { font-family: "Caveat", cursive; font-size: clamp(1.4rem, 6vw, 1.7rem); line-height: 1.2; margin: 10px 0; }
+  .back ul { list-style: none; padding: 0; margin: 6px 0 0; font-size: 1.05rem; text-align: left; width: 100%; }
+  .back li { display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(59,42,8,.3); padding: 2px 0; }
+  .back .firma { font-family: "Caveat", cursive; font-size: 1.4rem; color: var(--red); margin-top: 8px; }
+
+  .hint { margin-top: 16px; color: #a9c2ad; font-size: 1.05rem; letter-spacing: .05em; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="top">⚽ FICHAJE ESPECIAL ⚽</div>
+
+  <div class="scene" id="scene" role="button" tabindex="0" aria-label="Tarjeta de jugadora, toca para voltear">
+    <div class="card">
+      <div class="face front">
+        <div class="rating"><b id="media"></b><span id="pos"></span><i id="pais"></i></div>
+        <div class="photo" id="photo"></div>
+        <div class="name" id="name"></div>
+        <div class="stats" id="stats"></div>
+      </div>
+      <div class="face back">
+        <h2>Informe del scout</h2>
+        <p id="msg"></p>
+        <ul id="detalle"></ul>
+        <div class="firma" id="firma"></div>
+      </div>
+    </div>
+  </div>
+  <div class="hint">Toca la tarjeta para voltearla</div>
+
+<script>
+  const set = (id, t) => document.getElementById(id).textContent = t;
+  set('media', MEDIA);
+  set('pos', POSICION);
+  set('pais', PAIS);
+  set('name', NOMBRE);
+  set('msg', MENSAJE_REVERSO);
+  set('firma', '— ' + FIRMA + ', tu scout');
+
+  const photo = document.getElementById('photo');
+  if (FOTO) {
+    const img = document.createElement('img'); img.src = FOTO; img.alt = NOMBRE; photo.appendChild(img);
+  } else {
+    const e = document.createElement('div'); e.className = 'emoji'; e.textContent = EMOJI; photo.appendChild(e);
+  }
+
+  const stats = document.getElementById('stats');
+  const detalle = document.getElementById('detalle');
+  STATS.forEach(([abr, val, largo]) => {
+    const d = document.createElement('div');
+    d.innerHTML = '<b></b><span></span>';
+    d.querySelector('b').textContent = val;
+    d.querySelector('span').textContent = abr;
+    stats.appendChild(d);
+    const li = document.createElement('li');
+    li.innerHTML = '<span></span><b></b>';
+    li.querySelector('span').textContent = largo;
+    li.querySelector('b').textContent = val;
+    detalle.appendChild(li);
+  });
+
+  const scene = document.getElementById('scene');
+  const voltear = () => scene.classList.toggle('flip');
+  scene.addEventListener('click', voltear);
+  scene.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); voltear(); } });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

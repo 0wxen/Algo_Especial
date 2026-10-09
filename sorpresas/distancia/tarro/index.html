@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fdf0e6">
+<title>Tarro de razones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  // Todos los papelitos del tarro (puedes poner los que quieras)
+  const RAZONES = [
+    'Porque tu risa me alegra el día.',
+    'Porque eres súper inteligente.',
+    'Porque te tomas en serio tus sueños.',
+    'Porque me escuchas de verdad.',
+    'Porque haces que la distancia se sienta menos.',
+    'Porque te gusta Snoopy 🐶',
+    'Porque tienes buen gusto musical 🎤',
+    'Porque te animas a ver F1 conmigo 🏎️',
+    'Porque eres muy bonita.',
+    'Porque me aguantas cuando estoy de malas.',
+    'Porque contigo puedo ser yo.',
+    'Porque la vida nos volvió a cruzar.',
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg1: #fdf0e6; --bg2: #fde0ea; --ink: #3a2a2f; --muted: #8a7078; --red: #e8174f; --glass: rgba(210, 236, 245, .45); }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: linear-gradient(170deg, var(--bg1), var(--bg2)); color: var(--ink);
+    font-family: "Quicksand", system-ui, sans-serif; min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+    display: flex; flex-direction: column; align-items: center;
+    padding: max(22px, env(safe-area-inset-top)) 16px max(26px, env(safe-area-inset-bottom)); text-align: center;
+  }
+  h1 { font-family: "Caveat", cursive; color: var(--red); font-size: clamp(2.4rem, 10vw, 3.2rem); margin: 0; line-height: 1; }
+  .sub { color: var(--muted); margin: 4px 0 6px; }
+  .jar { width: min(62vw, 240px); cursor: pointer; }
+  .jar svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .jar.shake svg { animation: agitar .6s ease-in-out; transform-origin: 50% 90%; }
+  @keyframes agitar { 15% { transform: rotate(-12deg); } 35% { transform: rotate(10deg); } 55% { transform: rotate(-8deg); } 75% { transform: rotate(5deg); } }
+  .papel {
+    width: min(100%, 360px); margin-top: 10px; min-height: 92px; background: #fffdf5; border-radius: 6px;
+    padding: 16px 18px; box-shadow: 0 10px 24px rgba(0,0,0,.1); transform: rotate(-2deg);
+    font-family: "Caveat", cursive; font-size: clamp(1.5rem, 6vw, 1.8rem); line-height: 1.2;
+    display: flex; flex-direction: column; justify-content: center;
+    opacity: 0; transition: opacity .4s, transform .5s cubic-bezier(.2,1.5,.4,1);
+  }
+  .papel.show { opacity: 1; transform: rotate(-2deg) translateY(0); }
+  .papel small { font-family: "Quicksand", sans-serif; font-size: .72rem; color: var(--muted); font-weight: 700; letter-spacing: .08em; }
+  button.go { margin-top: 14px; border: 0; background: var(--red); color: #fff; border-radius: 999px; padding: 13px 24px; font: 700 1rem "Quicksand", sans-serif; cursor: pointer; box-shadow: 0 6px 18px rgba(232,23,79,.3); }
+  .count { color: var(--muted); font-size: .9rem; margin-top: 8px; }
+  .firma { font-family: "Caveat", cursive; color: var(--red); font-size: 1.5rem; margin-top: 4px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+  <h1>Tarro de razones</h1>
+  <p class="sub" id="sub"></p>
+  <div class="jar" id="jar" role="button" tabindex="0" aria-label="Agitar el tarro">
+    <svg viewBox="0 0 200 240" aria-hidden="true">
+      <rect x="58" y="10" width="84" height="26" rx="6" fill="#e8174f"/>
+      <rect x="58" y="28" width="84" height="8" fill="#b8103c"/>
+      <path d="M62 36 H138 V52 C168 62 176 90 176 120 V200 C176 222 160 232 140 232 H60 C40 232 24 222 24 200 V120 C24 90 32 62 62 52 Z" fill="var(--glass)" stroke="#8fb6c4" stroke-width="4"/>
+      <g id="papeles"></g>
+      <path d="M44 100 C40 130 40 170 46 200" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".7"/>
+      <text x="100" y="155" text-anchor="middle" font-size="20" font-family="Caveat, cursive" fill="#3a2a2f">💗</text>
+    </svg>
+  </div>
+  <div class="papel" id="papel"><small></small><span></span></div>
+  <button class="go" id="go">Agitar el tarro 🫙</button>
+  <div class="count" id="count"></div>
+  <div class="firma" id="firma"></div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = 'Para ' + NOMBRE + ': saca un papelito cuando quieras';
+  $('firma').textContent = '— ' + FIRMA;
+
+  // Papelitos de colores dentro del tarro
+  const colores = ['#ffd0dc', '#ffe9a8', '#c9ecff', '#d8f5c8', '#ead6ff', '#ffd9b8'];
+  let html = '';
+  for (let i = 0; i < Math.min(RAZONES.length * 2, 30); i++) {
+    const x = 40 + Math.random() * 120, y = 120 + Math.random() * 100, r = Math.random() * 360;
+    html += `<rect x="${x - 10}" y="${y - 5}" width="20" height="10" rx="2" fill="${colores[i % colores.length]}" transform="rotate(${r} ${x} ${y})"/>`;
+  }
+  $('papeles').innerHTML = html;
+
+  // Saca los papelitos sin repetir hasta acabarse
+  let bolsa = [], sacados = 0;
+  const rellenar = () => { bolsa = RAZONES.map((_, i) => i).sort(() => Math.random() - .5); };
+  rellenar();
+
+  function sacar() {
+    if (!bolsa.length) rellenar();
+    const i = bolsa.pop();
+    sacados++;
+    const jar = $('jar'), p = $('papel');
+    jar.classList.remove('shake'); void jar.offsetWidth; jar.classList.add('shake');
+    p.classList.remove('show');
+    setTimeout(() => {
+      p.querySelector('small').textContent = 'PAPELITO #' + (i + 1);
+      p.querySelector('span').textContent = RAZONES[i];
+      p.classList.add('show');
+      $('count').textContent = sacados >= RAZONES.length ? '¡Ya los leíste todos! (pero puedes seguir 💗)' : 'Papelitos leídos: ' + sacados + ' de ' + RAZONES.length;
+    }, 550);
+  }
+  $('go').addEventListener('click', sacar);
+  $('jar').addEventListener('click', sacar);
+  $('jar').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); sacar(); } });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

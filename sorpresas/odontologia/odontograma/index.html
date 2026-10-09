@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#eef8f6">
+<title>Odontograma del amor</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  // Cada diente guarda una razón o un recuerdo. Puedes poner de 6 a 16.
+  const DIENTES = [
+    'Tu sonrisa (obviamente, es un odontograma 😄)',
+    'Cómo te ríes de mis chistes malos',
+    'Lo dedicada que eres con la escuela',
+    'Las llamadas que se alargan sin darnos cuenta',
+    'Que te guste Snoopy tanto como a mí ahora',
+    'Tu buen gusto musical 🎤',
+    'Que te animes a ver F1 conmigo 🏎️',
+    'Tu paciencia conmigo',
+    'Cómo me escuchas',
+    'Que siempre me haces sentir bien',
+    'Lo bonita que eres',
+    'Que la vida nos volvió a cruzar',
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg: #eef8f6; --teal: #138a7e; --ink: #20343a; --muted: #61787e; --gum: #f7a6b8; --red: #e8174f; --card: #fff; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+  }
+  main { width: min(100%, 520px); margin: 0 auto; text-align: center; padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom)); }
+  .tag { display: inline-block; background: var(--teal); color: #fff; border-radius: 6px; padding: 3px 10px; font-weight: 700; font-size: .75rem; letter-spacing: .1em; }
+  h1 { font-family: "Caveat", cursive; color: var(--teal); font-size: clamp(2.2rem, 9vw, 3rem); margin: 6px 0 0; line-height: 1; }
+  .sub { color: var(--muted); margin: 4px 0 8px; }
+  svg { width: 100%; height: auto; display: block; }
+  .tooth { cursor: pointer; }
+  .tooth path { fill: #fff; stroke: var(--ink); stroke-width: 2.2; transition: fill .3s; }
+  .tooth text { font: 700 10px "Quicksand", sans-serif; fill: var(--muted); text-anchor: middle; dominant-baseline: central; pointer-events: none; }
+  .tooth.visto path { fill: #ffe0e8; }
+  .tooth.activo path { fill: var(--red); }
+  .tooth.activo text { fill: #fff; }
+  .tooth:hover path { stroke: var(--red); }
+  .card {
+    background: var(--card); border-radius: 16px; padding: 16px 18px; margin-top: 6px; min-height: 96px;
+    box-shadow: 0 10px 28px rgba(19,138,126,.14); border-left: 5px solid var(--teal); text-align: left;
+  }
+  .card small { color: var(--muted); font-weight: 700; letter-spacing: .08em; font-size: .72rem; }
+  .card p { font-family: "Caveat", cursive; font-size: clamp(1.45rem, 5.5vw, 1.75rem); margin: 4px 0 0; line-height: 1.2; }
+  .card.pop { animation: pop .4s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes pop { from { transform: scale(.94); opacity: 0; } }
+  .count { color: var(--muted); font-size: .9rem; margin-top: 10px; }
+  .firma { font-family: "Caveat", cursive; color: var(--red); font-size: 1.5rem; margin-top: 6px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <span class="tag">EXPEDIENTE CLÍNICO</span>
+  <h1>Odontograma del amor</h1>
+  <p class="sub" id="sub"></p>
+  <svg viewBox="0 0 400 330" id="boca" role="img" aria-label="Dentadura: cada diente tiene un mensaje">
+    <path d="M60 150 C60 40 340 40 340 150 Z" fill="var(--gum)" opacity=".55"/>
+    <path d="M60 180 C60 290 340 290 340 180 Z" fill="var(--gum)" opacity=".55"/>
+    <g id="dientes"></g>
+  </svg>
+  <div class="card" id="card"><small>DIAGNÓSTICO</small><p>Toca cualquier diente para ver qué guarda 🦷</p></div>
+  <div class="count" id="count"></div>
+  <div class="firma" id="firma"></div>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = 'Paciente: ' + NOMBRE + ' · Cada diente guarda algo';
+  $('firma').textContent = '— Dr. ' + FIRMA;
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const n = DIENTES.length;
+  const arriba = Math.ceil(n / 2), abajo = n - arriba;
+  const g = $('dientes');
+  const vistos = new Set();
+  const forma = 'M-11 -14 C-12 -20 -4 -20 0 -16 C4 -20 12 -20 11 -14 C12 -4 8 2 7 12 C6 18 2 18 1 10 C0 6 0 6 -1 10 C-2 18 -6 18 -7 12 C-8 2 -12 -4 -11 -14 Z';
+  let activo = null;
+
+  function arco(cuantos, cy, desde, hasta, offset) {
+    for (let k = 0; k < cuantos; k++) {
+      const t = cuantos === 1 ? .5 : k / (cuantos - 1);
+      const ang = (desde + (hasta - desde) * t) * Math.PI / 180;
+      const x = 200 + 125 * Math.cos(ang);
+      const y = cy + 92 * Math.sin(ang);
+      const rot = ang * 180 / Math.PI - 90;   // raíces hacia la encía
+      const idx = offset + k;
+      const el = document.createElementNS(NS, 'g');
+      el.setAttribute('class', 'tooth');
+      el.setAttribute('transform', `translate(${x} ${y}) rotate(${rot}) scale(1.35)`);
+      el.innerHTML = `<path d="${forma}"/><text y="-8" transform="rotate(${-rot})">${idx + 1}</text>`;
+      el.addEventListener('click', () => ver(idx, el));
+      g.appendChild(el);
+    }
+  }
+  arco(arriba, 160, 200, 340, 0);
+  arco(abajo, 170, 160, 20, arriba);
+
+  function ver(i, el) {
+    if (activo) activo.classList.remove('activo');
+    activo = el;
+    el.classList.add('activo', 'visto');
+    vistos.add(i);
+    const c = $('card');
+    c.innerHTML = '<small></small><p></p>';
+    c.querySelector('small').textContent = 'DIENTE ' + (i + 1);
+    c.querySelector('p').textContent = DIENTES[i];
+    c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop');
+    $('count').textContent = vistos.size === n ? '¡Revisaste todos! Paciente con sonrisa perfecta 💗' : 'Revisados: ' + vistos.size + ' de ' + n;
+  }
+  $('count').textContent = 'Revisados: 0 de ' + n;
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

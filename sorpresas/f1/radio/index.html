@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d0f13">
+<title>Radio del equipo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700;900&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const PILOTO = 'Carola';
+  const INGENIERO = 'Owen';
+  // de: 'ing' (tú) o 'pil' (ella, para que "conteste")
+  const RADIO = [
+    { de: 'ing', texto: 'Radio check, ' + PILOTO + '. ¿Me escuchas?' },
+    { de: 'pil', texto: 'Fuerte y claro.' },
+    { de: 'ing', texto: 'Ok, tenemos datos: tu sonrisa está marcando sector morado 💜' },
+    { de: 'ing', texto: 'Mantén el ritmo en la escuela, vas increíble.' },
+    { de: 'ing', texto: 'Box, box. Box, box. Te extraño.' },
+    { de: 'pil', texto: 'Copy 😌' },
+    { de: 'ing', texto: 'Estrategia confirmada: nos vemos en diciembre. Plan A, sin plan B.' },
+    { de: 'ing', texto: 'P1, P1. ¡Eres la mejor! Grande, grande 🏆' },
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg: #0d0f13; --panel: #171a21; --text: #f1f3f6; --muted: #8892a0; --team: #e10600; --pil: #ffcf3f; --purple: #b04cff; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: radial-gradient(circle at 50% 0, #1c2530, var(--bg) 60%); color: var(--text);
+    font-family: "Titillium Web", system-ui, sans-serif; min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+  }
+  main { width: min(100%, 520px); margin: 0 auto; padding: max(20px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom)); }
+  .head small { color: var(--team); font-weight: 900; letter-spacing: .2em; font-size: .75rem; }
+  h1 { margin: 0; font-weight: 900; font-style: italic; text-transform: uppercase; font-size: clamp(1.8rem, 8vw, 2.4rem); line-height: 1; }
+  .stripe { height: 4px; margin: 10px 0 16px; background: linear-gradient(90deg, var(--team) 0 60%, var(--text) 60% 65%, transparent 65%); }
+
+  .feed { display: flex; flex-direction: column; gap: 10px; min-height: 200px; }
+  .msg {
+    display: grid; grid-template-columns: 6px 1fr; background: var(--panel); border-radius: 6px; overflow: hidden;
+    animation: entra .35s ease-out;
+  }
+  @keyframes entra { from { opacity: 0; transform: translateX(-14px); } }
+  .msg::before { content: ""; background: var(--team); }
+  .msg.pil::before { background: var(--pil); }
+  .msg > div { padding: 10px 14px; }
+  .who { display: flex; align-items: center; gap: 8px; font-size: .75rem; font-weight: 900; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; }
+  .wave { display: inline-flex; gap: 2px; align-items: center; height: 14px; }
+  .wave i { width: 3px; background: var(--team); border-radius: 2px; height: 4px; }
+  .msg.pil .wave i { background: var(--pil); }
+  .msg.live .wave i { animation: onda .5s ease-in-out infinite alternate; }
+  .wave i:nth-child(2) { animation-delay: .1s !important; } .wave i:nth-child(3) { animation-delay: .25s !important; }
+  .wave i:nth-child(4) { animation-delay: .05s !important; } .wave i:nth-child(5) { animation-delay: .3s !important; }
+  @keyframes onda { to { height: 14px; } }
+  .txt { font-size: 1.15rem; font-weight: 700; margin-top: 2px; font-style: italic; min-height: 1.4em; }
+  .txt::before { content: "“"; color: var(--muted); } .txt::after { content: "”"; color: var(--muted); }
+
+  .btn {
+    margin-top: 16px; width: 100%; border: 0; border-radius: 10px; padding: 15px; cursor: pointer;
+    background: var(--team); color: #fff; font: 900 1.05rem "Titillium Web", sans-serif; text-transform: uppercase; letter-spacing: .06em; font-style: italic;
+  }
+  .btn:disabled { opacity: .5; cursor: default; }
+  .note { color: var(--muted); text-align: center; font-size: .85rem; margin-top: 10px; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+<main>
+  <div class="head"><small>EN VIVO · ONBOARD</small><h1>Radio del equipo</h1></div>
+  <div class="stripe"></div>
+  <div class="feed" id="feed"></div>
+  <button class="btn" id="btn">📻 Abrir radio</button>
+  <p class="note" id="note"></p>
+</main>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('note').textContent = 'Piloto: ' + PILOTO + ' · Ingeniero de carrera: ' + INGENIERO;
+  let i = 0, ocupado = false;
+
+  function escribir(el, texto) {
+    return new Promise(res => {
+      let k = 0;
+      const t = setInterval(() => { el.textContent = texto.slice(0, ++k); if (k >= texto.length) { clearInterval(t); res(); } }, 28);
+    });
+  }
+  async function siguiente() {
+    if (ocupado || i >= RADIO.length) return;
+    ocupado = true; $('btn').disabled = true;
+    const r = RADIO[i];
+    const m = document.createElement('div');
+    m.className = 'msg live ' + r.de;
+    m.innerHTML = '<div><div class="who"><span class="wave"><i></i><i></i><i></i><i></i><i></i></span><span></span></div><div class="txt"></div></div>';
+    m.querySelector('.who span:last-child').textContent = r.de === 'pil' ? PILOTO : INGENIERO + ' (ingeniero)';
+    $('feed').appendChild(m);
+    await escribir(m.querySelector('.txt'), r.texto);
+    m.classList.remove('live');
+    m.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    i++;
+    ocupado = false; $('btn').disabled = i >= RADIO.length;
+    $('btn').textContent = i >= RADIO.length ? '🏁 Fin de la transmisión' : '📻 Siguiente mensaje';
+  }
+  $('btn').addEventListener('click', siguiente);
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

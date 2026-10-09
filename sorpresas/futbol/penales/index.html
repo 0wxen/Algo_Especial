@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f7a3a">
+<title>Tanda de penales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;800&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  // Un mensaje por cada gol
+  const MENSAJES = [
+    'Gol 1: Me encanta hablar contigo todos los días.',
+    'Gol 2: Eres de las personas más bonitas que conozco, por dentro y por fuera.',
+    'Gol 3: Me haces reír como nadie.',
+    'Gol 4: Estoy muy orgulloso de todo lo que logras.',
+    'Gol 5: Ya quiero que sea diciembre para verte 💗',
+  ];
+  const MENSAJE_FINAL = '¡5 de 5! Campeona absoluta… y la dueña de mi portería 🏆⚽';
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root {
+    --grass1: #2a8a45;
+    --grass2: #23793c;
+    --text: #ffffff;
+    --ink: #1c2a20;
+    --gold: #ffd54a;
+    --red: #e8174f;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: #165c2b;
+    color: var(--text);
+    font-family: "Barlow Condensed", system-ui, sans-serif;
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: max(16px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+    overflow-x: hidden;
+  }
+  h1 { margin: 0; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; font-size: clamp(1.7rem, 7vw, 2.3rem); text-align: center; }
+  .score { display: flex; gap: 8px; margin: 6px 0 10px; font-size: 1.5rem; }
+  .score span { filter: grayscale(1) opacity(.35); transition: filter .3s; }
+  .score span.ok { filter: none; }
+
+  .pitch {
+    position: relative; width: min(100%, 420px); aspect-ratio: 4 / 4.6;
+    border-radius: 16px; overflow: hidden;
+    background: repeating-linear-gradient(180deg, var(--grass1) 0 12%, var(--grass2) 12% 24%);
+    box-shadow: inset 0 0 50px rgba(0,0,0,.3);
+  }
+  .goal {
+    position: absolute; left: 10%; width: 80%; top: 8%; height: 30%;
+    border: 6px solid #fff; border-bottom: 0;
+    background:
+      repeating-linear-gradient(90deg, rgba(255,255,255,.35) 0 1px, transparent 1px 12px),
+      repeating-linear-gradient(0deg, rgba(255,255,255,.35) 0 1px, transparent 1px 12px),
+      rgba(0,0,0,.15);
+  }
+  .area { position: absolute; left: 4%; right: 4%; top: 38%; height: 26%; border: 3px solid rgba(255,255,255,.7); border-top: 0; }
+  .line { position: absolute; left: 0; right: 0; top: 38%; border-top: 3px solid rgba(255,255,255,.7); }
+  .spot { position: absolute; left: 50%; top: 82%; width: 8px; height: 8px; margin: -4px 0 0 -4px; background: #fff; border-radius: 50%; }
+
+  .keeper {
+    position: absolute; left: 50%; top: 27%; width: 64px;
+    transform: translate(-50%, -50%);
+    transition: left .45s ease-out, transform .45s ease-out;
+  }
+  .keeper.diveL { transform: translate(-50%, -40%) rotate(-70deg); }
+  .keeper.diveR { transform: translate(-50%, -40%) rotate(70deg); }
+
+  .ball {
+    position: absolute; left: 50%; top: 82%; font-size: 2.2rem; line-height: 1;
+    transform: translate(-50%, -50%);
+    transition: left .55s cubic-bezier(.2,.7,.3,1), top .55s cubic-bezier(.2,.7,.3,1), font-size .55s;
+  }
+  .ball.shot { font-size: 1.4rem; }
+  .gol {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: clamp(3rem, 16vw, 4.5rem); color: var(--gold);
+    text-shadow: 0 4px 0 #8a5a00, 0 0 30px rgba(0,0,0,.4);
+    opacity: 0; transform: scale(.5); transition: opacity .25s, transform .35s cubic-bezier(.2,1.6,.4,1);
+    pointer-events: none;
+  }
+  .gol.show { opacity: 1; transform: scale(1); }
+
+  .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; width: min(100%, 420px); margin-top: 12px; }
+  .controls button {
+    border: 0; border-radius: 12px; padding: 14px 6px; cursor: pointer;
+    background: #fff; color: var(--ink); font: 800 1.15rem "Barlow Condensed", sans-serif; text-transform: uppercase;
+    box-shadow: 0 4px 0 #b9c9bd;
+  }
+  .controls button:active { transform: translateY(2px); box-shadow: 0 2px 0 #b9c9bd; }
+  .controls button:disabled { opacity: .5; }
+
+  .msg {
+    width: min(100%, 420px); margin-top: 12px; min-height: 76px;
+    background: rgba(255,255,255,.95); color: var(--ink); border-radius: 14px; padding: 12px 16px;
+    font-family: "Caveat", cursive; font-size: 1.5rem; line-height: 1.2; text-align: center;
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .msg small { font-family: "Barlow Condensed", sans-serif; font-size: .95rem; color: var(--red); font-weight: 800; letter-spacing: .05em; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition: none !important; }
+  }
+</style>
+</head>
+<body>
+  <h1 id="titulo"></h1>
+  <div class="score" id="score"></div>
+
+  <div class="pitch" id="pitch">
+    <div class="goal"></div>
+    <div class="line"></div>
+    <div class="area"></div>
+    <div class="spot"></div>
+    <svg class="keeper" id="keeper" viewBox="0 0 64 80" aria-hidden="true">
+      <circle cx="32" cy="14" r="10" fill="#f2c9a0"/>
+      <path d="M18 26 h28 l4 28 h-36 z" fill="#ff7a00"/>
+      <path d="M18 28 L4 6 M46 28 L60 6" stroke="#ff7a00" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="4" cy="6" r="5" fill="#1c2a20"/><circle cx="60" cy="6" r="5" fill="#1c2a20"/>
+      <path d="M22 54 v22 M42 54 v22" stroke="#1c2a20" stroke-width="8" stroke-linecap="round"/>
+    </svg>
+    <div class="ball" id="ball">⚽</div>
+    <div class="gol" id="gol">¡GOOOL!</div>
+  </div>
+
+  <div class="controls">
+    <button data-dir="0">⬅ Izq</button>
+    <button data-dir="1">⬆ Centro</button>
+    <button data-dir="2">Der ➡</button>
+  </div>
+
+  <div class="msg" id="msg"><small>TÚ TIRAS</small>Elige a dónde patear ⚽</div>
+
+<script>
+  document.getElementById('titulo').textContent = NOMBRE + ' vs. ' + FIRMA;
+  const score = document.getElementById('score');
+  const marcas = MENSAJES.map(() => { const s = document.createElement('span'); s.textContent = '⚽'; score.appendChild(s); return s; });
+
+  const X = [25, 50, 75];
+  const ball = document.getElementById('ball');
+  const keeper = document.getElementById('keeper');
+  const gol = document.getElementById('gol');
+  const msg = document.getElementById('msg');
+  const botones = [...document.querySelectorAll('.controls button')];
+  let goles = 0;
+
+  function mostrar(titulo, texto) {
+    msg.innerHTML = '<small></small><span></span>';
+    msg.querySelector('small').textContent = titulo;
+    msg.querySelector('span').textContent = texto;
+  }
+
+  function reset() {
+    ball.classList.remove('shot');
+    ball.style.left = '50%'; ball.style.top = '82%';
+    keeper.className.baseVal = 'keeper';
+    keeper.style.left = '50%';
+    gol.classList.remove('show');
+  }
+
+  function tirar(dir) {
+    if (goles >= MENSAJES.length) return;
+    botones.forEach(b => b.disabled = true);
+    // El portero siempre se lanza hacia otro lado 😉
+    const opciones = [0, 1, 2].filter(d => d !== dir);
+    const kd = opciones[Math.floor(Math.random() * opciones.length)];
+    keeper.style.left = X[kd] + '%';
+    keeper.className.baseVal = 'keeper' + (kd === 0 ? ' diveL' : kd === 2 ? ' diveR' : '');
+    ball.classList.add('shot');
+    ball.style.left = X[dir] + '%';
+    ball.style.top = (dir === 1 ? 16 : 20) + '%';
+
+    setTimeout(() => {
+      gol.classList.add('show');
+      marcas[goles].classList.add('ok');
+      mostrar('GOL ' + (goles + 1) + ' DE ' + MENSAJES.length, MENSAJES[goles].replace(/^Gol \d+:\s*/, ''));
+      goles++;
+      setTimeout(() => {
+        if (goles >= MENSAJES.length) {
+          gol.textContent = '🏆';
+          mostrar('¡CAMPEONA!', MENSAJE_FINAL + ' — ' + FIRMA);
+          return;
+        }
+        reset();
+        botones.forEach(b => b.disabled = false);
+      }, 1600);
+    }, 600);
+  }
+
+  botones.forEach(b => b.addEventListener('click', () => tirar(+b.dataset.dir)));
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>
