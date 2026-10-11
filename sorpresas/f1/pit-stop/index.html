@@ -30,12 +30,23 @@
   .timer { font-size: clamp(2.6rem, 13vw, 3.6rem); font-weight: 900; font-variant-numeric: tabular-nums; font-style: italic; }
   .timer.done { color: var(--purple); }
   .pit {
-    position: relative; margin: 8px auto 0; width: min(80vw, 300px); aspect-ratio: 3 / 4;
-    background: repeating-linear-gradient(90deg, #262c34 0 48%, #ffd400 48% 52%, #262c34 52% 100%); border-radius: 14px;
+    position: relative; margin: 8px auto 0; width: min(88vw, 380px); aspect-ratio: 1;
+    background:
+      linear-gradient(90deg, transparent 36.6%, #ffd400 36.6% 38.4%, transparent 38.4%),
+      linear-gradient(90deg, #262c34 0 72%, #1c2128 72%);
+    border-radius: 14px;
   }
   svg { position: absolute; inset: 0; width: 100%; height: 100%; }
   .tire { cursor: pointer; }
   .tire rect { fill: #3a3f46; stroke: #111; stroke-width: 2; transition: fill .2s; }
+  .tire .tread { stroke: #2b2f35; stroke-width: 2; }
+  #piloto .cuerpo { animation: respira 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes respira { 50% { transform: translateY(-2px); } }
+  #piloto .brazo { transform-box: fill-box; transform-origin: 50% 100%; animation: saluda 1.6s ease-in-out infinite; }
+  @keyframes saluda { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-18deg); } 85% { transform: rotate(14deg); } }
+  .festeja #piloto .cuerpo { animation: brinca .5s ease-in-out infinite alternate; }
+  @keyframes brinca { to { transform: translateY(-14px); } }
+  .festeja #piloto .brazo { animation: saluda .5s ease-in-out infinite; }
   .tire .band { fill: none; stroke: #666; stroke-width: 3; transition: stroke .2s; }
   .tire.new rect { fill: #151515; }
   .tire.new .band { stroke: var(--red); }
@@ -83,15 +94,89 @@
   <div class="timer" id="timer">0.00</div>
 
   <div class="pit">
-    <svg viewBox="0 0 300 400" aria-label="Carro visto desde arriba, toca las 4 llantas">
-      <!-- carro visto desde arriba -->
-      <rect x="132" y="28" width="36" height="14" rx="3" fill="#e10600"/>
-      <rect x="92" y="30" width="116" height="12" rx="4" fill="#e10600"/>
-      <path d="M135 42 L165 42 L178 150 L190 260 L184 340 L116 340 L110 260 L122 150 Z" fill="#e10600" stroke="#7a0300" stroke-width="2"/>
-      <ellipse cx="150" cy="200" rx="16" ry="26" fill="#111"/>
-      <circle cx="150" cy="196" r="9" fill="#ffcf3f"/>
-      <rect x="86" y="348" width="128" height="16" rx="4" fill="#e10600"/>
+    <svg viewBox="0 0 400 400" aria-label="Carro de F1 visto desde arriba con su piloto; toca las 4 llantas">
+      <defs>
+        <linearGradient id="plata" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0" stop-color="#9aa0a8"/><stop offset=".5" stop-color="#eef0f3"/><stop offset="1" stop-color="#9aa0a8"/>
+        </linearGradient>
+        <linearGradient id="visera" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#2a3a52"/><stop offset=".55" stop-color="#0c1118"/><stop offset="1" stop-color="#3b5a7a"/>
+        </linearGradient>
+      </defs>
+      <!-- marcas del box -->
+      <rect x="28" y="6" width="244" height="388" rx="10" fill="none" stroke="#ffffff" stroke-opacity=".18" stroke-width="2" stroke-dasharray="10 8"/>
+
       <g id="tires"></g>
+
+      <!-- carro visto desde arriba (colores estilo Mercedes, sin logos) -->
+      <g id="carro">
+        <!-- alerón delantero -->
+        <rect x="26" y="10" width="7" height="34" rx="2" fill="#1b1b1f"/><rect x="267" y="10" width="7" height="34" rx="2" fill="#1b1b1f"/>
+        <path d="M30 20 Q150 6 270 20 L270 32 Q150 22 30 32 Z" fill="#1b1b1f"/>
+        <path d="M34 33 Q150 25 266 33 L264 40 Q150 32 36 40 Z" fill="#00d2be"/>
+        <!-- suspensión delantera -->
+        <path d="M136 66 L98 60 M136 92 L98 98 M164 66 L202 60 M164 92 L202 98" stroke="#2a2a2e" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- nariz -->
+        <path d="M141 30 C142 24 158 24 159 30 L166 122 L134 122 Z" fill="url(#plata)" stroke="#6b7078" stroke-width="1"/>
+        <path d="M147 34 L153 34 L156 122 L144 122 Z" fill="#1b1b1f"/>
+        <text x="150" y="92" text-anchor="middle" font-family="Titillium Web, sans-serif" font-weight="900" font-size="13" fill="#00d2be">12</text>
+        <!-- pontones -->
+        <path d="M128 150 C104 156 96 180 98 214 C100 248 110 270 126 284 L174 284 C190 270 200 248 202 214 C204 180 196 156 172 150 Z" fill="#1b1b1f"/>
+        <path d="M104 178 C108 163 119 156 128 156 L128 180 Z M196 178 C192 163 181 156 172 156 L172 180 Z" fill="#000" opacity=".75"/>
+        <path d="M108 200 C112 240 122 266 134 280 M192 200 C188 240 178 266 166 280" fill="none" stroke="#00d2be" stroke-width="3" stroke-linecap="round"/>
+        <!-- monocasco y cubierta del motor -->
+        <path d="M134 120 L166 120 L172 172 L128 172 Z" fill="#1b1b1f"/>
+        <path d="M138 188 L162 188 L168 284 L132 284 Z" fill="url(#plata)"/>
+        <path d="M150 190 L150 282" stroke="#7d828a" stroke-width="1.5"/>
+        <!-- espejos -->
+        <rect x="118" y="136" width="12" height="6" rx="2" fill="#1b1b1f"/><rect x="170" y="136" width="12" height="6" rx="2" fill="#1b1b1f"/>
+        <!-- cabina con el casco del piloto -->
+        <ellipse cx="150" cy="166" rx="13" ry="20" fill="#0b0b0b"/>
+        <circle cx="150" cy="166" r="10" fill="#f4f4f4"/>
+        <path d="M140.5 163 A10 10 0 0 1 159.5 163 L157 168 L143 168 Z" fill="url(#visera)"/>
+        <path d="M150 156 L150 176" stroke="#00d2be" stroke-width="3"/>
+        <!-- halo -->
+        <path d="M150 140 L150 149 M150 149 C135 151 134 177 141 188 M150 149 C165 151 166 177 159 188" fill="none" stroke="#a7adb5" stroke-width="4" stroke-linecap="round"/>
+        <!-- suspensión trasera y caja de cambios -->
+        <path d="M140 276 L98 270 M140 300 L98 306 M160 276 L202 270 M160 300 L202 306" stroke="#2a2a2e" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M138 284 L162 284 L160 322 L140 322 Z" fill="#1b1b1f"/>
+        <path d="M112 318 H188 L184 336 H116 Z" fill="#101012"/>
+        <!-- alerón trasero -->
+        <rect x="84" y="332" width="7" height="36" rx="2" fill="#1b1b1f"/><rect x="209" y="332" width="7" height="36" rx="2" fill="#1b1b1f"/>
+        <path d="M88 340 H212 L210 362 H90 Z" fill="#1b1b1f"/>
+        <path d="M88 340 H212" stroke="#00d2be" stroke-width="3"/>
+        <rect x="145" y="364" width="10" height="5" rx="1" fill="#ff2a2a"/>
+      </g>
+
+      <!-- piloto: casco inspirado en Kimi Antonelli (#12, Italia) -->
+      <g id="piloto">
+        <ellipse cx="345" cy="374" rx="30" ry="6" fill="#000" opacity=".35"/>
+        <g class="cuerpo">
+          <rect x="331" y="318" width="13" height="46" rx="6" fill="#141416"/>
+          <rect x="347" y="318" width="13" height="46" rx="6" fill="#141416"/>
+          <rect x="327" y="356" width="19" height="11" rx="4" fill="#00d2be"/>
+          <rect x="345" y="356" width="19" height="11" rx="4" fill="#00d2be"/>
+          <rect x="318" y="246" width="54" height="80" rx="18" fill="#141416"/>
+          <path d="M345 250 L345 322" stroke="#00d2be" stroke-width="5"/>
+          <path d="M322 296 H368" stroke="#c7cbd1" stroke-width="3" opacity=".6"/>
+          <rect x="304" y="256" width="14" height="44" rx="7" fill="#141416" transform="rotate(12 311 258)"/>
+          <circle cx="309" cy="302" r="7" fill="#00d2be"/>
+          <g class="brazo">
+            <rect x="372" y="222" width="14" height="44" rx="7" fill="#141416"/>
+            <circle cx="379" cy="220" r="8" fill="#00d2be"/>
+          </g>
+          <rect x="337" y="236" width="16" height="14" rx="4" fill="#141416"/>
+          <!-- casco -->
+          <circle cx="345" cy="210" r="34" fill="#f4f4f4" stroke="#1b1b1f" stroke-width="2"/>
+          <path d="M313 200 Q345 176 377 200" fill="none" stroke="#00d2be" stroke-width="7" stroke-linecap="round"/>
+          <path d="M318 186 Q345 168 372 186" fill="none" stroke="#1b1b1f" stroke-width="3" stroke-linecap="round"/>
+          <path d="M318 210 Q345 198 372 210 L370 226 Q345 236 320 226 Z" fill="url(#visera)"/>
+          <path d="M326 212 Q338 206 350 208" fill="none" stroke="#fff" stroke-width="2.5" opacity=".55" stroke-linecap="round"/>
+          <rect x="327" y="238" width="6" height="5" fill="#009246"/><rect x="333" y="238" width="6" height="5" fill="#ffffff"/><rect x="339" y="238" width="6" height="5" fill="#ce2b37"/>
+          <text x="357" y="243" font-family="Titillium Web, sans-serif" font-weight="900" font-size="9" fill="#1b1b1f">12</text>
+        </g>
+        <text x="345" y="395" text-anchor="middle" font-family="Titillium Web, sans-serif" font-weight="900" font-size="12" fill="#eef2f6" letter-spacing="1">KIMI · 12</text>
+      </g>
     </svg>
   </div>
   <p class="hint" id="hint">Toca las 4 llantas lo más rápido que puedas 🛞</p>
@@ -118,7 +203,7 @@
   const llantas = pos.map(([x, y]) => {
     const g = document.createElementNS(NS, 'g');
     g.setAttribute('class', 'tire');
-    g.innerHTML = `<rect x="${x - 26}" y="${y - 40}" width="52" height="80" rx="10"/><path class="band" d="M${x - 20} ${y - 40} V${y + 40} M${x + 20} ${y - 40} V${y + 40}"/>`;
+    g.innerHTML = `<rect x="${x - 26}" y="${y - 40}" width="52" height="80" rx="13"/><path class="tread" d="M${x - 22} ${y - 24} H${x + 22} M${x - 22} ${y - 8} H${x + 22} M${x - 22} ${y + 8} H${x + 22} M${x - 22} ${y + 24} H${x + 22}"/><path class="band" d="M${x - 20} ${y - 36} V${y + 36} M${x + 20} ${y - 36} V${y + 36}"/>`;
     g.addEventListener('click', () => cambiar(g));
     $('tires').appendChild(g);
     return g;
@@ -131,6 +216,7 @@
     cambiadas++;
     if (cambiadas === 4) {
       cancelAnimationFrame(raf);
+      document.querySelector('.pit').classList.add('festeja');
       const s = ((performance.now() - t0) / 1000).toFixed(2);
       $('timer').textContent = s + ' s';
       $('timer').classList.add('done');
@@ -168,6 +254,7 @@
   pintarTabla();
 
   $('again').addEventListener('click', () => {
+    document.querySelector('.pit').classList.remove('festeja');
     cambiadas = 0;
     llantas.forEach(l => l.classList.remove('new', 'pop'));
     $('timer').textContent = '0.00'; $('timer').classList.remove('done');

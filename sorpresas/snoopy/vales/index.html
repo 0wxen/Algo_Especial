@@ -12,16 +12,29 @@
   // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
-  const VALIDOS_DESDE = 'diciembre 2026';
-  const ESPERA_HORAS = 168;  // después de canjear un vale, cuántas horas hay que esperar para canjear otro (168 = 1 semana)
-  const VALES = [
+  const ESPERA_HORAS = 168;  // después de canjear un vale, cuántas horas esperar para canjear otro DEL MISMO GRUPO (168 = 1 semana)
+
+  // Vales que se pueden canjear ya, aunque estemos lejos
+  const VALES_DISTANCIA = [
+    { emoji: '📹', titulo: 'Una videollamada larga',   detalle: 'Sin prisas y sin colgar primero. Tú dices cuándo se acaba.' },
+    { emoji: '🍿', titulo: 'Peli al mismo tiempo',     detalle: 'Le damos play juntos, cada quien en su casa, y la comentamos por llamada.' },
+    { emoji: '🎧', titulo: 'Una playlist para ti',      detalle: 'Te hago una playlist con canciones que me recuerdan a ti.' },
+    { emoji: '✍️', titulo: 'Una carta a mano',          detalle: 'Te escribo una carta a mano y te mando la foto (o te la doy en diciembre).' },
+    { emoji: '🎤', titulo: 'Un audio cantando',         detalle: 'Te mando un audio cantando la canción que tú elijas. Sin burlas 😅' },
+    { emoji: '🌙', titulo: 'Llamada de buenas noches',  detalle: 'Te llamo para que te duermas tranquila, aunque sea tarde.' },
+    { emoji: '📚', titulo: 'Compañero de estudio',      detalle: 'Me quedo en llamada contigo mientras estudias, calladito y echándote porras.' },
+    { emoji: '🏆', titulo: 'Ganar una discusión',       detalle: 'Úsalo con sabiduría: te doy la razón sin decir nada.' },
+  ];
+
+  // Vales para cuando nos veamos en persona
+  const VALES_PERSONA = [
     { emoji: '🤗', titulo: 'Un abrazo largo',        detalle: 'De esos que duran más de 10 segundos. Sin límite de tiempo.' },
     { emoji: '🍦', titulo: 'Un helado',              detalle: 'Del sabor que tú quieras, yo invito.' },
     { emoji: '🎬', titulo: 'Una peli juntos',        detalle: 'Tú eliges la película y yo llevo las palomitas.' },
-    { emoji: '🏆', titulo: 'Ganar una discusión',    detalle: 'Úsalo con sabiduría: te doy la razón sin decir nada.' },
     { emoji: '📸', titulo: 'Una sesión de fotos',    detalle: 'Las fotos que quieras, en donde quieras, sin quejarme.' },
     { emoji: '🍕', titulo: 'Una cena',               detalle: 'Comida a tu elección y plática hasta tarde.' },
     { emoji: '⚽', titulo: 'Un partido juntos',      detalle: 'Ver un partido de tu equipo, con botanas incluidas.' },
+    { emoji: '🚶‍♀️', titulo: 'Un paseo de la mano', detalle: 'A donde tú quieras, sin prisa.' },
     { emoji: '💌', titulo: 'Un deseo',               detalle: 'Lo que tú quieras (dentro de lo razonable 😅).' },
   ];
   // -------------------------------------------------------------------
@@ -75,6 +88,9 @@
   .sub { color: var(--muted); margin: 4px 0 22px; }
 
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+  .grupo { grid-column: 1 / -1; margin: 14px 0 0; font-family: "Caveat", cursive; font-size: 1.9rem; color: var(--ink); display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+  .grupo:first-child { margin-top: 0; }
+  .grupo small { font-family: "Quicksand", sans-serif; font-size: .82rem; color: var(--muted); }
   .vale {
     position: relative;
     background: var(--paper);
@@ -199,38 +215,55 @@
 </div>
 
 <script>
-  document.getElementById('bubble').textContent = '¡' + NOMBRE + ', estos vales son para cuando nos veamos!';
-  document.getElementById('sub').textContent = 'Válidos a partir de ' + VALIDOS_DESDE + ' · Sin fecha de caducidad';
+  document.getElementById('bubble').textContent = '¡' + NOMBRE + ', unos vales son para ya y otros para cuando nos veamos!';
+  document.getElementById('sub').textContent = 'Sin fecha de caducidad 💗';
   document.getElementById('firma').textContent = 'Con cariño, ' + FIRMA + ' 🐶';
+  document.getElementById('nota').textContent = 'Toca un vale para verlo. De cada grupo puedes canjear uno cada ' + (ESPERA_HORAS % 24 === 0 ? (ESPERA_HORAS / 24 === 7 ? 'semana' : ESPERA_HORAS / 24 + ' días') : ESPERA_HORAS + ' horas') + ', y cada vale solo una vez. Cuando lo canjees, enséñamelo 💗';
 
-  document.getElementById('nota').textContent = 'Toca un vale para verlo. Puedes canjear uno cada ' + ESPERA_HORAS + ' horas, y cada vale solo una vez. Cuando lo canjees, enséñamelo 💗';
+  const GRUPOS = {
+    d: { lista: VALES_DISTANCIA, nombre: 'A distancia', desc: 'Para canjear ya, aunque estemos lejos', valido: 'Válido desde ya' },
+    p: { lista: VALES_PERSONA,   nombre: 'En persona',  desc: 'Para cuando nos veamos', valido: 'Válido en persona' },
+  };
 
-  // canjes: { número de vale: cuándo se canjeó } · ultimo: cuándo fue el último canje
-  const KEY = 'vales-snoopy-canjes';
+  // canjes: { 'd3': cuándo se canjeó } · ultimo: { d: último canje a distancia, p: último en persona }
+  const KEY = 'vales-snoopy-canjes-v2';
   const ESPERA = ESPERA_HORAS * 60 * 60 * 1000;
-  let estado = { canjes: {}, ultimo: 0 };
+  let estado = { canjes: {}, ultimo: { d: 0, p: 0 } };
   try { estado = JSON.parse(localStorage.getItem(KEY)) || estado; } catch (e) {}
   const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch (e) {} };
-  const falta = () => Math.max(0, estado.ultimo + ESPERA - Date.now());
+  const falta = g => Math.max(0, (estado.ultimo[g] || 0) + ESPERA - Date.now());
   const pad = x => String(x).padStart(2, '0');
-  const reloj = ms => Math.floor(ms / 3600000) + ':' + pad(Math.floor(ms / 60000) % 60) + ':' + pad(Math.floor(ms / 1000) % 60);
+  const reloj = ms => {
+    const d = Math.floor(ms / 86400000), h = Math.floor(ms / 3600000) % 24;
+    return (d ? d + (d === 1 ? ' día ' : ' días ') : '') + h + ':' + pad(Math.floor(ms / 60000) % 60) + ':' + pad(Math.floor(ms / 1000) % 60);
+  };
   const cuando = t => new Date(t).toLocaleDateString('es-MX', { day: 'numeric', month: 'short' }) + ', ' + new Date(t).toLocaleTimeString('es-MX', { hour: 'numeric', minute: '2-digit' });
 
   const grid = document.getElementById('grid');
-  const botones = VALES.map((v, i) => {
-    const b = document.createElement('button');
-    b.className = 'vale';
-    b.innerHTML = '<span class="e"></span><span class="t"></span><span class="tag"></span>';
-    b.querySelector('.e').textContent = v.emoji;
-    b.querySelector('.t').textContent = v.titulo;
-    b.addEventListener('click', () => abrir(i));
-    grid.appendChild(b);
-    return b;
+  const botones = {};
+  Object.entries(GRUPOS).forEach(([g, info]) => {
+    const h = document.createElement('h2');
+    h.className = 'grupo';
+    h.innerHTML = '<span></span><small></small>';
+    h.querySelector('span').textContent = (g === 'd' ? '📱 ' : '🤝 ') + info.nombre;
+    h.querySelector('small').textContent = info.desc;
+    grid.appendChild(h);
+    info.lista.forEach((v, i) => {
+      const id = g + i;
+      const b = document.createElement('button');
+      b.className = 'vale';
+      b.innerHTML = '<span class="e"></span><span class="t"></span><span class="tag"></span>';
+      b.querySelector('.e').textContent = v.emoji;
+      b.querySelector('.t').textContent = v.titulo;
+      b.addEventListener('click', () => abrir(g, i));
+      grid.appendChild(b);
+      botones[id] = b;
+    });
   });
 
   function pintar() {
-    botones.forEach((b, i) => {
-      const c = estado.canjes[i];
+    Object.entries(botones).forEach(([id, b]) => {
+      const c = estado.canjes[id];
       b.classList.toggle('reservado', !!c);
       b.querySelector('.tag').textContent = c ? '✓ CANJEADO' : 'VALE POR 1';
     });
@@ -240,46 +273,47 @@
   const overlay = document.getElementById('overlay');
   const reservar = document.getElementById('reservar');
   const aviso = document.getElementById('aviso');
-  let actual = 0, confirmando = false;
+  let grupo = 'd', actual = 0, confirmando = false;
+  const idActual = () => grupo + actual;
 
   function pintarBoton() {
-    const c = estado.canjes[actual];
+    const c = estado.canjes[idActual()];
     reservar.classList.remove('confirmar');
     if (c) {
       reservar.textContent = '✓ Canjeado';
       reservar.classList.add('done');
       aviso.textContent = 'Lo canjeaste el ' + cuando(c) + '. ¡Enséñale esta pantalla a ' + FIRMA + '! 💗';
-    } else if (falta() > 0) {
-      reservar.textContent = '⏳ Todavía no puedes canjear otro';
+    } else if (falta(grupo) > 0) {
+      reservar.textContent = '⏳ Todavía no puedes canjear otro de este grupo';
       reservar.classList.add('done');
-      aviso.textContent = 'Próximo canje disponible en ' + reloj(falta());
+      aviso.textContent = 'Próximo canje ' + GRUPOS[grupo].nombre.toLowerCase() + ' en ' + reloj(falta(grupo));
     } else if (confirmando) {
       reservar.textContent = '¿Segura? Toca otra vez para canjear';
       reservar.classList.remove('done');
       reservar.classList.add('confirmar');
-      aviso.textContent = 'Después tendrás que esperar ' + ESPERA_HORAS + ' horas para canjear otro.';
+      aviso.textContent = 'Después tendrás que esperar para canjear otro vale ' + GRUPOS[grupo].nombre.toLowerCase() + '.';
     } else {
       reservar.textContent = 'Canjear este vale 💌';
       reservar.classList.remove('done');
       aviso.textContent = '';
     }
   }
-  function abrir(i) {
-    actual = i; confirmando = false;
-    const v = VALES[i];
+  function abrir(g, i) {
+    grupo = g; actual = i; confirmando = false;
+    const v = GRUPOS[g].lista[i];
     document.getElementById('bigE').textContent = v.emoji;
     document.getElementById('bigT').textContent = v.titulo;
     document.getElementById('bigD').textContent = v.detalle;
-    document.getElementById('bigCode').textContent = 'SNOOPY-' + String(i + 1).padStart(3, '0');
-    document.getElementById('bigFecha').textContent = 'Desde ' + VALIDOS_DESDE;
+    document.getElementById('bigCode').textContent = 'SNOOPY-' + g.toUpperCase() + String(i + 1).padStart(2, '0');
+    document.getElementById('bigFecha').textContent = GRUPOS[g].valido;
     pintarBoton();
     overlay.classList.add('open');
   }
   reservar.addEventListener('click', () => {
-    if (estado.canjes[actual] || falta() > 0) return;
+    if (estado.canjes[idActual()] || falta(grupo) > 0) return;
     if (!confirmando) { confirmando = true; return pintarBoton(); }
-    estado.canjes[actual] = Date.now();
-    estado.ultimo = Date.now();
+    estado.canjes[idActual()] = Date.now();
+    estado.ultimo[grupo] = Date.now();
     confirmando = false;
     guardar();
     pintarBoton();

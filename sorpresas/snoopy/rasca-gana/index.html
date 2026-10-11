@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffe08a">
+<title>Rasca y gana</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const ESPERA_HORAS = 24;   // cada cuánto puede raspar una tarjeta nueva (contado desde que raspó la anterior)
+  // Premios, en este orden y sin repetir (cuando se acaban vuelven a empezar).
+  // e = emoji grande, t = texto. Si es un vale, que mande captura para canjearlo.
+  const PREMIOS = [
+    { e: '💌', t: 'Ganaste: un "te extraño" de mi parte. Hoy y todos los días.' },
+    { e: '📱', t: 'Ganaste: una videollamada cuando tú quieras. Mándame captura para canjearla.' },
+    { e: '😜', t: 'Sigue intentando… mentira, ganaste un te quiero 💗' },
+    { e: '🎶', t: 'Ganaste: una canción dedicada. Tú eliges el género, yo la busco.' },
+    { e: '🐶', t: 'Ganaste: un abrazo de Snoopy (y uno mío en diciembre).' },
+    { e: '🍦', t: 'Ganaste: un helado cuando nos veamos. Guarda captura, ¿eh?' },
+    { e: '✨', t: 'Ganaste: saber que eres lo más bonito de mi día.' },
+    { e: '🎤', t: 'Ganaste: un audio mío cantando (desafinado, pero con amor).' },
+    { e: '😜', t: 'Sigue intentando… no, espera, ganaste otra vez: un beso virtual 😘' },
+    { e: '🏎️', t: 'Ganaste: ver la próxima carrera de F1 conmigo en llamada.' },
+    { e: '📝', t: 'Ganaste: una carta escrita a mano. Mándame captura y empiezo a escribir.' },
+    { e: '🦷', t: 'Ganaste: un "qué orgulloso estoy de ti, doctora".' },
+    { e: '🎬', t: 'Ganaste: elegir la próxima peli que vemos al mismo tiempo.' },
+    { e: '🌙', t: 'Ganaste: una llamada de buenas noches hasta que te dé sueño.' },
+    { e: '🏆', t: 'Ganaste: ganar la próxima discusión sin pelear. Úsalo bien 😌' },
+    { e: '🤗', t: 'Ganaste: el abrazo más largo del mundo, canjeable en diciembre.' },
+    { e: '📸', t: 'Ganaste: una foto mía haciendo la cara que tú me pidas.' },
+    { e: '🍕', t: 'Ganaste: una cena pagada por mí cuando nos veamos.' },
+    { e: '💗', t: 'Premio mayor: yo. Ya no hay devoluciones 😁' },
+    { e: '⭐', t: 'Ganaste: una razón más por la que me gustas: tu risa.' },
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg1: #fff6d6; --bg2: #ffd8e4; --ink: #3d2a2f; --muted: #806770; --red: #e8174f; --gold: #f4b400; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: radial-gradient(circle at 50% 0, var(--bg1), var(--bg2)); background-attachment: fixed;
+    color: var(--ink); font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: max(52px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  }
+  h1 { font-family: "Caveat", cursive; color: var(--red); font-size: clamp(2.6rem, 11vw, 3.4rem); margin: 0; line-height: 1; }
+  .sub { color: var(--muted); margin: 6px 0 16px; }
+  .ticket {
+    position: relative; width: min(100%, 360px); aspect-ratio: 4 / 3;
+    background: #fff; border-radius: 22px; padding: 10px;
+    box-shadow: 0 10px 30px rgba(160, 60, 90, .2);
+  }
+  .ticket::before { content: ""; position: absolute; inset: 10px; border: 2px dashed #f2b8c8; border-radius: 16px; pointer-events: none; }
+  .zona { position: relative; width: 100%; height: 100%; border-radius: 14px; overflow: hidden; background: linear-gradient(135deg, #fff9e6, #ffeef4); }
+  .premio { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 16px 20px; gap: 6px; }
+  .premio .e { font-size: clamp(2.6rem, 13vw, 3.4rem); line-height: 1; }
+  .premio .t { font-family: "Caveat", cursive; font-size: clamp(1.35rem, 5.6vw, 1.7rem); line-height: 1.15; }
+  canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab; transition: opacity .6s; }
+  canvas.fuera { opacity: 0; pointer-events: none; }
+  .hint { color: var(--muted); margin: 14px 0 0; min-height: 1.4em; }
+  .cuenta { font-weight: 700; color: var(--red); }
+  .firma { font-family: "Caveat", cursive; color: var(--red); font-size: 1.6rem; margin: 6px 0 0; opacity: 0; transition: opacity .6s; }
+  .firma.show { opacity: 1; }
+  .confeti { position: fixed; top: 40%; left: 50%; pointer-events: none; font-size: 22px; animation: vuela 1.4s ease-out forwards; }
+  @keyframes vuela { to { transform: translate(var(--x), var(--y)) rotate(var(--r)); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+  <h1>Rasca y gana</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="ticket">
+    <div class="zona" id="zona">
+      <div class="premio" id="premio"><div class="e" id="pe"></div><div class="t" id="pt"></div></div>
+      <canvas id="capa" aria-label="Raspa con el dedo para descubrir tu premio"></canvas>
+    </div>
+  </div>
+  <p class="hint" id="hint">Raspa con el dedo 👆</p>
+  <p class="firma" id="firma"></p>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = 'Para ' + NOMBRE + ' · una tarjeta nueva cada ' + ESPERA_HORAS + ' horas';
+  $('firma').textContent = '— ' + FIRMA;
+
+  const ESPERA = ESPERA_HORAS * 3600000;
+  const KEY = 'rasca-estado';
+  let estado = null;   // { i: número de tarjeta, t: cuándo la raspó (null si aún no) }
+  try { estado = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch (e) {} };
+
+  // ¿Ya le toca una tarjeta nueva?
+  if (!estado) estado = { i: 0, t: null };
+  else if (estado.t && Date.now() - estado.t >= ESPERA) estado = { i: estado.i + 1, t: null };
+  guardar();
+
+  const premio = PREMIOS[estado.i % PREMIOS.length];
+  $('pe').textContent = premio.e;
+  $('pt').textContent = premio.t;
+
+  const canvas = $('capa'), ctx = canvas.getContext('2d'), zona = $('zona');
+  let revelado = !!estado.t, rascando = false, ultimo = null, cuenta = 0;
+
+  function pintarCapa() {
+    const r = zona.getBoundingClientRect(), dpr = window.devicePixelRatio || 1;
+    canvas.width = r.width * dpr; canvas.height = r.height * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.globalCompositeOperation = 'source-over';
+    const g = ctx.createLinearGradient(0, 0, r.width, r.height);
+    g.addColorStop(0, '#b9bec6'); g.addColorStop(.45, '#eef0f3'); g.addColorStop(.55, '#d8dbe0'); g.addColorStop(1, '#a3a9b2');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, r.width, r.height);
+    // brillitos y dibujito
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    for (let i = 0; i < 40; i++) ctx.fillRect(Math.random() * r.width, Math.random() * r.height, 2, 2);
+    ctx.fillStyle = '#6b7079'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.font = '700 ' + Math.round(r.width / 11) + 'px Quicksand, system-ui, sans-serif';
+    ctx.fillText('RASCA AQUÍ', r.width / 2, r.height / 2 - r.width / 16);
+    ctx.font = Math.round(r.width / 9) + 'px system-ui, sans-serif';
+    ctx.fillText('🐶 💗 🪙', r.width / 2, r.height / 2 + r.width / 10);
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = Math.max(34, r.width / 9);
+  }
+
+  function punto(e) { const r = canvas.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+  function raspar(p) {
+    ctx.beginPath();
+    if (ultimo) ctx.moveTo(ultimo.x, ultimo.y); else ctx.moveTo(p.x - .1, p.y);
+    ctx.lineTo(p.x, p.y); ctx.stroke();
+    ultimo = p;
+    if (++cuenta % 8 === 0) revisar();
+  }
+  function revisar() {
+    const d = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    let limpio = 0, total = 0;
+    for (let i = 3; i < d.length; i += 4 * 37) { total++; if (d[i] === 0) limpio++; }
+    if (limpio / total > .5) revelar(true);
+  }
+
+  function revelar(nuevo) {
+    if (revelado && nuevo) return;
+    revelado = true;
+    canvas.classList.add('fuera');
+    $('firma').classList.add('show');
+    if (nuevo) { estado.t = Date.now(); guardar(); confeti(); }
+    tick();
+  }
+
+  function confeti() {
+    const em = ['💗', '✨', '🎉', '⭐', '💕'];
+    for (let i = 0; i < 26; i++) {
+      const s = document.createElement('span');
+      s.className = 'confeti'; s.textContent = em[i % em.length];
+      s.style.setProperty('--x', (Math.random() * 360 - 180) + 'px');
+      s.style.setProperty('--y', (Math.random() * 360 - 220) + 'px');
+      s.style.setProperty('--r', (Math.random() * 360) + 'deg');
+      document.body.appendChild(s);
+      setTimeout(() => s.remove(), 1500);
+    }
+  }
+
+  function tick() {
+    if (!revelado) return;
+    const falta = Math.max(0, estado.t + ESPERA - Date.now());
+    if (falta === 0) { $('hint').innerHTML = '¡Ya hay una tarjeta nueva! <b class="cuenta">Recarga la página</b> 🎟️'; return; }
+    const h = Math.floor(falta / 3600000), m = Math.floor(falta / 60000) % 60, s = Math.floor(falta / 1000) % 60;
+    $('hint').innerHTML = 'Nueva tarjeta en <span class="cuenta">' + h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + '</span> 🎟️';
+  }
+
+  canvas.addEventListener('pointerdown', e => { if (revelado) return; rascando = true; ultimo = null; canvas.setPointerCapture(e.pointerId); raspar(punto(e)); });
+  canvas.addEventListener('pointermove', e => { if (rascando) raspar(punto(e)); });
+  const soltar = () => { if (!rascando) return; rascando = false; ultimo = null; revisar(); };
+  canvas.addEventListener('pointerup', soltar);
+  canvas.addEventListener('pointercancel', soltar);
+
+  if (revelado) revelar(false);
+  else {
+    pintarCapa();
+    let ancho = innerWidth;
+    addEventListener('resize', () => { if (!revelado && innerWidth !== ancho) { ancho = innerWidth; pintarCapa(); } });
+    document.fonts && document.fonts.ready.then(() => { if (!revelado && cuenta === 0) pintarCapa(); });
+  }
+  setInterval(tick, 1000);
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

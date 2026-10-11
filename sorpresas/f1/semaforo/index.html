@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#14171c">
+<title>Semáforo de salida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@400;700;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const TOP = 5;   // cuántos mejores tiempos se guardan
+  // Mensaje según su tiempo (en segundos). Se usa el primero cuyo "hasta" sea mayor a su tiempo.
+  const NIVELES = [
+    { hasta: 0.18, t: '¡Reflejos de otro planeta! Ni los pilotos salen tan rápido 🚀' },
+    { hasta: 0.25, t: '¡Nivel piloto de F1! Ya te quiero en la parrilla 🏎️💨' },
+    { hasta: 0.33, t: '¡Muy buena salida! Podio seguro 🥉' },
+    { hasta: 0.45, t: 'Buena salida. Un poquito más y alcanzas a los pilotos 💪' },
+    { hasta: 99,   t: 'Salida tranquila… ¿te distrajiste pensando en mí? 😌' },
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg: #14171c; --panel: #1f242c; --txt: #eef2f6; --muted: #98a2ae; --rojo: #ff1e1e; --apagado: #3a1214; --teal: #00d2be; --oro: #ffd400; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: radial-gradient(circle at 50% 0, #2a303a, var(--bg) 70%); background-attachment: fixed;
+    color: var(--txt); font-family: "Titillium Web", system-ui, sans-serif;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden; text-align: center;
+    padding: max(52px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    user-select: none; -webkit-user-select: none;
+  }
+  .wrap { width: min(100%, 520px); margin: 0 auto; }
+  h1 { font-weight: 900; font-size: clamp(1.8rem, 8vw, 2.4rem); margin: 0; letter-spacing: 1px; text-transform: uppercase; font-style: italic; }
+  h1 span { color: var(--rojo); }
+  .sub { color: var(--muted); margin: 2px 0 14px; }
+  .pista {
+    position: relative; border-radius: 18px; padding: 18px 12px 22px; cursor: pointer; touch-action: manipulation;
+    background: linear-gradient(180deg, var(--panel), #171a20); box-shadow: 0 12px 30px rgba(0,0,0,.45), inset 0 0 0 2px #2c333d;
+  }
+  .gantry { display: flex; justify-content: center; gap: clamp(6px, 2.4vw, 12px); padding: 12px; background: #0b0c0f; border-radius: 12px; border-top: 6px solid #2d3139; }
+  .col { display: flex; flex-direction: column; gap: 8px; padding: 6px 4px; background: #000; border-radius: 10px; }
+  .luz { width: clamp(28px, 9.5vw, 52px); aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #4a1a1c, var(--apagado)); box-shadow: inset 0 -4px 8px rgba(0,0,0,.6); }
+  .col.on .luz.r { background: radial-gradient(circle at 35% 30%, #ffb3b3, var(--rojo) 55%, #a80000); box-shadow: 0 0 18px var(--rojo), 0 0 34px rgba(255, 30, 30, .55); }
+  .estado { font-weight: 900; font-size: clamp(1.3rem, 6vw, 1.7rem); margin: 16px 0 0; min-height: 1.3em; text-transform: uppercase; letter-spacing: 1px; }
+  .tiempo { font-weight: 900; font-size: clamp(3rem, 16vw, 4.4rem); line-height: 1; color: var(--teal); margin: 6px 0 0; font-variant-numeric: tabular-nums; }
+  .tiempo.falso { color: var(--rojo); font-size: clamp(2rem, 10vw, 2.8rem); }
+  .msj { font-family: "Caveat", cursive; font-size: clamp(1.4rem, 5.5vw, 1.7rem); line-height: 1.15; margin: 8px 0 0; min-height: 1.2em; }
+  .ref { color: var(--muted); font-size: .9rem; margin-top: 6px; }
+  .tabla { margin: 18px auto 0; width: min(100%, 360px); background: var(--panel); border-radius: 14px; padding: 12px 14px; text-align: left; box-shadow: inset 0 0 0 2px #2c333d; }
+  .tabla h2 { margin: 0 0 6px; font-size: 1rem; text-transform: uppercase; letter-spacing: 1px; color: var(--oro); }
+  .tabla ol { margin: 0; padding: 0; list-style: none; counter-reset: p; }
+  .tabla li { display: flex; justify-content: space-between; padding: 5px 0; border-bottom: 1px solid #2c333d; font-variant-numeric: tabular-nums; counter-increment: p; }
+  .tabla li::before { content: "P" counter(p); color: var(--muted); font-weight: 700; width: 34px; }
+  .tabla li span:first-child { flex: 1; }
+  .tabla li.nuevo { color: var(--teal); font-weight: 700; }
+  .tabla li.ref-f1 { color: var(--muted); font-style: italic; }
+  .tabla li.ref-f1::before { content: "★"; }
+  .vacio { color: var(--muted); font-size: .9rem; }
+  .firma { font-family: "Caveat", cursive; color: var(--rojo); font-size: 1.5rem; margin: 12px 0 0; }
+  .pista.flash { animation: flash .3s; }
+  @keyframes flash { 50% { box-shadow: 0 0 0 4px var(--teal), 0 12px 30px rgba(0,0,0,.45); } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Semáforo de <span>salida</span></h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="pista" id="pista" role="button" tabindex="0" aria-label="Toca para arrancar">
+    <div class="gantry" id="gantry"></div>
+    <p class="estado" id="estado">Toca para empezar</p>
+    <div class="tiempo" id="tiempo"></div>
+    <p class="msj" id="msj">Se prenden las 5 luces rojas… y cuando se apaguen, ¡toca lo más rápido que puedas!</p>
+    <p class="ref">Los pilotos de F1 reaccionan en unos 0.20 s</p>
+  </div>
+
+  <div class="tabla">
+    <h2>🏁 Mejores salidas</h2>
+    <ol id="lista"></ol>
+  </div>
+  <p class="firma" id="firma"></p>
+</div>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = '¿Qué tan rápidos son tus reflejos, ' + NOMBRE + '?';
+  $('firma').textContent = '— ' + FIRMA;
+
+  // 5 columnas con 2 luces cada una (como el semáforo real)
+  const gantry = $('gantry');
+  for (let c = 0; c < 5; c++) gantry.insertAdjacentHTML('beforeend', '<div class="col"><div class="luz"></div><div class="luz r"></div></div>');
+  const cols = [...gantry.children];
+
+  const KEY = 'semaforo-tiempos';
+  let tiempos = [];
+  try { tiempos = JSON.parse(localStorage.getItem(KEY)) || []; } catch (e) {}
+
+  function pintarTabla(nuevo) {
+    const filas = tiempos.map(t => ({ t, ref: false })).concat([{ t: 0.2, ref: true }]).sort((a, b) => a.t - b.t);
+    const ol = $('lista'); ol.innerHTML = '';
+    if (!tiempos.length) { ol.innerHTML = '<li class="ref-f1"><span>Piloto de F1 (promedio)</span><span>0.200 s</span></li><p class="vacio">Todavía no hay salidas. ¡Estrena la tabla!</p>'; return; }
+    let marcado = false;
+    filas.forEach(f => {
+      const li = document.createElement('li');
+      li.innerHTML = '<span></span><span></span>';
+      li.children[0].textContent = f.ref ? 'Piloto de F1 (promedio)' : NOMBRE;
+      li.children[1].textContent = f.t.toFixed(3) + ' s';
+      if (f.ref) li.className = 'ref-f1';
+      else if (!marcado && f.t === nuevo) { li.className = 'nuevo'; marcado = true; }
+      ol.appendChild(li);
+    });
+  }
+  pintarTabla();
+
+  let fase = 'listo', timers = [], inicio = 0;
+  const estado = $('estado'), tiempo = $('tiempo'), msj = $('msj'), pista = $('pista');
+  const apagar = () => cols.forEach(c => c.classList.remove('on'));
+  const limpiar = () => { timers.forEach(clearTimeout); timers = []; };
+
+  function arrancar() {
+    fase = 'cargando'; limpiar(); apagar();
+    estado.textContent = 'Atenta…'; tiempo.textContent = ''; tiempo.className = 'tiempo'; msj.textContent = '';
+    cols.forEach((c, i) => timers.push(setTimeout(() => c.classList.add('on'), 1000 * (i + 1))));
+    // después de la 5ª luz, se apagan en un momento al azar (entre 0.2 y 3 s)
+    timers.push(setTimeout(() => {
+      apagar(); fase = 'ya'; inicio = performance.now(); estado.textContent = '¡YA!';
+    }, 5000 + 200 + Math.random() * 2800));
+  }
+
+  function tocar() {
+    if (fase === 'listo' || fase === 'resultado') return arrancar();
+    if (fase === 'cargando') {
+      limpiar(); apagar(); fase = 'resultado';
+      estado.textContent = 'Salida en falso 🚩';
+      tiempo.textContent = 'JUMP START'; tiempo.className = 'tiempo falso';
+      msj.textContent = 'Te adelantaste… tanta prisa por verme, ¿eh? 😏 Toca para intentar otra vez.';
+      return;
+    }
+    if (fase === 'ya') {
+      const t = (performance.now() - inicio) / 1000;
+      fase = 'resultado';
+      estado.textContent = 'Tu tiempo';
+      tiempo.textContent = t.toFixed(3) + ' s';
+      msj.textContent = NIVELES.find(n => t < n.hasta).t;
+      pista.classList.remove('flash'); void pista.offsetWidth; pista.classList.add('flash');
+      tiempos.push(t); tiempos.sort((a, b) => a - b); tiempos = tiempos.slice(0, TOP);
+      try { localStorage.setItem(KEY, JSON.stringify(tiempos)); } catch (e) {}
+      pintarTabla(t);
+      setTimeout(() => { if (fase === 'resultado') estado.textContent = 'Toca para otra salida'; }, 1500);
+    }
+  }
+
+  pista.addEventListener('pointerdown', e => { e.preventDefault(); tocar(); });
+  pista.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocar(); } });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

@@ -12,7 +12,40 @@
   // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
   const NOMBRE = 'Carola';
   const FIRMA = 'Owen';
-  const MENSAJE = 'Dejaste ese dientito brillando ✨ Vas a ser la mejor dentista del mundo, y yo voy a ser tu fan número uno 🦷💗';
+  // Cada vez que termina de limpiar un diente le sale uno de estos
+  // (en orden, sin repetir; cuando se acaban vuelven a empezar)
+  const MENSAJES = [
+    'Dejaste ese dientito brillando ✨ Vas a ser la mejor dentista del mundo, y yo voy a ser tu fan número uno 🦷💗',
+    '¡Diente perfecto! Si así cuidas los dientes, imagínate cómo cuidas corazones 💗',
+    'Sonrisa restaurada con éxito. Paciente: feliz. Yo: más orgulloso que nunca.',
+    'Otro diente salvado. Tu consultorio va a ser el más bonito de Puebla 🦷',
+    'Ese diente ya puede sonreír tranquilo… igual que yo cuando hablo contigo 😁',
+    'Trabajo impecable, doctora. Te mereces un helado (y un abrazo en diciembre) 🍦🤗',
+    'Ni la mejor pasta de dientes deja un diente así de brillante ✨',
+    'Misión cumplida. Snoopy aplaude desde su casita 🐶👏',
+    'Tus pacientes van a tener mucha suerte contigo. Yo ya la tengo 💗',
+    'Doctora, ¿también limpia corazones? Porque el mío quedó brillando igual que ese diente.',
+    'Ni una caries se te escapó 😎 Precisión nivel F1 🏎️',
+    'Golazo contra las caries ⚽ Y el MVP del partido eres tú.',
+    'Me encanta lo dedicada que eres. Cada día estoy más orgulloso de ti.',
+    'Ese diente ya te quiere tanto como yo… bueno, casi 😌💗',
+    'Tu futuro consultorio va a tener fila afuera 🦷🦷🦷',
+    'Hasta las caries se van cuando llegas tú. Igual que mis días malos.',
+    'Gracias por cuidar sonrisas, empezando por la mía 😁',
+    'Futura Dra. Carola: puro talento 🩺✨',
+    'Diente salvado. Heroína: tú 🦸‍♀️',
+    'Ese brillo combina con tus ojos 👀✨',
+    'Nadie limpia dientes con tanto estilo 💅 Otro pasito más hacia tu título 🎓',
+    'Tus manos de doctora + tu corazón bonito = combinación perfecta 💗',
+    'Snoopy dice que eres su dentista favorita, y yo también 🐶',
+    'Qué bonito verte hacer lo que te gusta. Sigue así, que vas increíble.',
+    'Limpieza nivel experta 🧼 Ese paciente se va a ir enamorado (no te lo permito 😤)',
+    'Me haces sonreír hasta desde lejos, y ahora este diente también 😁',
+    'Diente de comercial de pasta 📺 Directora del comercial: tú.',
+    'Eres increíble, que no se te olvide nunca 💗',
+    'Paciente feliz, doctora feliz, y yo feliz de conocerte 🥰',
+    'Te quiero mucho, doctora. Ese diente es testigo 🦷💗',
+  ];
   // -------------------------------------------------------------------
 </script>
 <style>
@@ -72,6 +105,13 @@
     opacity: 0; transform: translateY(16px); transition: opacity .6s, transform .6s;
   }
   .msg.show { opacity: 1; transform: none; }
+  .msg small { display: block; font-family: "Quicksand", sans-serif; font-size: .72rem; font-weight: 700; letter-spacing: .1em; color: var(--teal); margin-bottom: 4px; }
+  .msg .firma { display: none; }
+  .msg.final .firma { display: block; }
+  .msg.pop { animation: msgpop .4s cubic-bezier(.2,1.4,.4,1); }
+  @keyframes msgpop { from { transform: scale(.94); } }
+  .otro { display: none; margin-top: 12px; border: 0; border-radius: 999px; padding: 12px 20px; background: var(--teal); color: #fff; font: 700 1rem "Quicksand", sans-serif; cursor: pointer; box-shadow: 0 6px 16px rgba(25,165,154,.3); }
+  .otro.show { display: inline-block; }
   .msg .firma { color: var(--red); margin-top: 6px; }
   .hint { color: var(--muted); font-size: .9rem; margin-top: 8px; }
 
@@ -109,33 +149,55 @@
   </div>
   <p class="hint" id="hint">Toca las manchitas cafés para limpiarlas</p>
 
-  <div class="msg" id="msg"><div id="msgText"></div><div class="firma" id="firma"></div></div>
+  <div class="msg" id="msg"><small id="msgTitulo"></small><div id="msgText"></div><div class="firma" id="firma"></div></div>
+  <button class="otro" id="otro">Limpiar otro diente 🪥</button>
 
 <script>
-  document.getElementById('titulo').textContent = 'Doctora ' + NOMBRE;
-  document.getElementById('msgText').textContent = MENSAJE;
-  document.getElementById('firma').textContent = '— ' + FIRMA;
+  const $ = id => document.getElementById(id);
+  $('titulo').textContent = 'Doctora ' + NOMBRE;
+  $('firma').textContent = '— ' + FIRMA;
+
+  // Dónde va cada lista (se guarda en su celular para no repetir mensajes)
+  const KEY = 'caries-mensajes';
+  let pos = { m: 0, f: 0, dientes: 0 };
+  try { pos = Object.assign(pos, JSON.parse(localStorage.getItem(KEY)) || {}); } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(pos)); } catch (e) {} };
+  const siguiente = (lista, k) => { const t = lista[pos[k] % lista.length]; pos[k]++; guardar(); return t; };
 
   const SVGNS = 'http://www.w3.org/2000/svg';
   const posiciones = [[70, 52], [128, 50], [100, 72], [64, 142], [134, 140], [80, 182]];
-  const group = document.getElementById('cariesGroup');
-  const sparks = document.getElementById('sparks');
-  let quedan = posiciones.length;
-  const left = document.getElementById('left');
-  left.textContent = quedan;
+  const group = $('cariesGroup');
+  const sparks = $('sparks');
+  const total = posiciones.length;
+  let quedan = total;
 
-  posiciones.forEach(([x, y], i) => {
-    const g = document.createElementNS(SVGNS, 'g');
-    g.setAttribute('class', 'caries');
-    const r = 8 + (i % 3) * 2;
-    g.innerHTML = `
-      <circle cx="${x}" cy="${y}" r="${r + 10}" fill="transparent"/>
-      <path d="M${x - r} ${y} C${x - r} ${y - r * 1.1} ${x + r * .6} ${y - r * 1.2} ${x + r} ${y - r * .2}
-               C${x + r * 1.2} ${y + r * .9} ${x - r * .2} ${y + r * 1.2} ${x - r} ${y} Z" fill="var(--caries)" opacity=".85"/>
-      <circle cx="${x + r * .2}" cy="${y - r * .2}" r="${r * .35}" fill="#4a2a10"/>`;
-    g.addEventListener('click', () => limpiar(g, x, y));
-    group.appendChild(g);
-  });
+  function crearCaries() {
+    group.innerHTML = '';
+    quedan = total;
+    $('left').textContent = quedan;
+    posiciones.forEach(([x0, y0], i) => {
+      // se mueven un poquito cada diente para que no sea siempre igual
+      const x = x0 + (Math.random() * 10 - 5), y = y0 + (Math.random() * 10 - 5);
+      const g = document.createElementNS(SVGNS, 'g');
+      g.setAttribute('class', 'caries');
+      const r = 7 + Math.random() * 5;
+      g.innerHTML = `
+        <circle cx="${x}" cy="${y}" r="${r + 10}" fill="transparent"/>
+        <path d="M${x - r} ${y} C${x - r} ${y - r * 1.1} ${x + r * .6} ${y - r * 1.2} ${x + r} ${y - r * .2}
+                 C${x + r * 1.2} ${y + r * .9} ${x - r * .2} ${y + r * 1.2} ${x - r} ${y} Z" fill="var(--caries)" opacity=".85"/>
+        <circle cx="${x + r * .2}" cy="${y - r * .2}" r="${r * .35}" fill="#4a2a10"/>`;
+      g.addEventListener('click', () => limpiar(g, x, y));
+      group.appendChild(g);
+    });
+  }
+
+  function mostrar(titulo, texto, final) {
+    const m = $('msg');
+    $('msgTitulo').textContent = titulo;
+    $('msgText').textContent = texto;
+    m.classList.toggle('final', !!final);
+    m.classList.remove('show', 'pop'); void m.offsetWidth; m.classList.add('show', 'pop');
+  }
 
   function limpiar(g, x, y) {
     if (g.classList.contains('clean')) return;
@@ -147,13 +209,27 @@
     sparks.appendChild(s);
     setTimeout(() => s.remove(), 900);
     quedan--;
-    left.textContent = quedan;
+    $('left').textContent = quedan;
     if (quedan === 0) {
-      document.getElementById('stage').classList.add('done');
-      document.getElementById('hint').textContent = '¡Dientito sano y feliz!';
-      setTimeout(() => document.getElementById('msg').classList.add('show'), 500);
+      pos.dientes++; guardar();
+      $('stage').classList.add('done');
+      $('hint').textContent = '¡Dientito sano y feliz! Dientes limpiados: ' + pos.dientes;
+      setTimeout(() => {
+        mostrar('¡DIENTE LIMPIO! 🦷', siguiente(MENSAJES, 'f'), true);
+        $('otro').classList.add('show');
+      }, 450);
     }
   }
+
+  $('otro').addEventListener('click', () => {
+    $('stage').classList.remove('done');
+    $('otro').classList.remove('show');
+    $('msg').classList.remove('show');
+    $('hint').textContent = 'Toca las manchitas cafés para limpiarlas';
+    crearCaries();
+  });
+
+  crearCaries();
 </script>
 <a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
 </body>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#ffe4ec">
+<title>Pregunta del día</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  // Tu número de WhatsApp con lada del país, sin espacios ni "+" (ej. '5216181234567').
+  // Si lo dejas vacío, el botón la deja escoger a quién mandarlo.
+  const WHATSAPP = '';
+  // Una pregunta nueva 24 horas después de abrir la anterior, en este orden (cuando se acaban vuelven a empezar)
+  const PREGUNTAS = [
+    '¿Cuál era tu comida favorita cuando eras niña?',
+    '¿Qué canción te pone de buenas al instante?',
+    'Si pudieras viajar mañana a cualquier lugar, ¿a dónde irías?',
+    '¿Cuál es tu recuerdo favorito de la infancia?',
+    '¿Qué es lo que más te gusta de estudiar odontología?',
+    '¿Cuál es tu película que puedes ver mil veces?',
+    '¿Qué fue lo primero que pensaste de mí?',
+    '¿Prefieres playa o montaña? ¿Por qué?',
+    '¿Cuál es tu personaje favorito de Snoopy (además de Snoopy)?',
+    '¿Qué es algo pequeño que te hace muy feliz?',
+    'Si tuvieras un día libre sin nada que hacer, ¿cómo lo pasarías?',
+    '¿Qué canción de The Weeknd te define?',
+    '¿Cuál es tu antojo favorito a la medianoche?',
+    '¿Qué te gustaría que hiciéramos la primera vez que nos veamos?',
+    '¿Cuál es tu mayor sueño a futuro?',
+    '¿Qué superpoder te gustaría tener?',
+    '¿Café, té o chocolate caliente?',
+    '¿Qué es lo más loco que has hecho?',
+    '¿Cuál es tu equipo de fútbol favorito y por qué?',
+    '¿Qué piloto de F1 te cae mejor hasta ahora?',
+    '¿Qué es lo que más extrañas cuando estás lejos de casa?',
+    '¿Cuál es tu estación del año favorita?',
+    '¿Qué serie te gustaría que viéramos juntos?',
+    '¿Cómo sería tu consultorio ideal?',
+    '¿Qué te da más miedo (aunque sea algo chistoso)?',
+    '¿Cuál es el mejor consejo que te han dado?',
+    '¿Qué es algo que nadie sabe de ti?',
+    'Si fueras un emoji, ¿cuál serías?',
+    '¿Qué lugar de Puebla me llevarías a conocer primero?',
+    '¿Cuál es tu forma favorita de recibir cariño?',
+    '¿Qué canción pondrías en nuestro primer viaje en carro?',
+    '¿Cuál ha sido el mejor día de tu vida hasta ahora?',
+    '¿Qué es lo primero que haces al despertar?',
+    '¿Perros o gatos? (Snoopy está escuchando 👀)',
+    '¿Qué es algo que siempre has querido aprender?',
+    '¿Cuál es tu postre favorito?',
+    '¿Qué te hace reír sin falta?',
+    '¿Qué harías si ganaras la lotería?',
+    '¿Cuál es tu palabra favorita?',
+    '¿Qué es algo que te gustaría que hiciera más seguido?',
+    '¿Prefieres amanecer o atardecer?',
+    '¿Qué recuerdo de nosotros te gusta más hasta ahora?',
+    '¿Qué te gustaría que hiciéramos en diciembre?',
+    '¿Cuál fue tu primer concierto (o cuál te gustaría que fuera)?',
+    '¿Qué es lo más bonito que alguien ha hecho por ti?',
+    '¿Qué tres cosas te llevarías a una isla desierta?',
+    '¿Cuál es tu olor favorito?',
+    '¿Qué te gusta más de ti?',
+    '¿Qué te imaginas que estaremos haciendo dentro de un año?',
+    '¿Qué es lo que más te gusta de hablar conmigo? 😌',
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --bg1: #ffe4ec; --bg2: #e7e0ff; --ink: #3d2a3a; --muted: #7d6680; --red: #e8174f; --wa: #25d366; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: linear-gradient(160deg, var(--bg1), var(--bg2)); background-attachment: fixed;
+    color: var(--ink); font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: max(52px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+  }
+  h1 { font-family: "Caveat", cursive; color: var(--red); font-size: clamp(2.6rem, 11vw, 3.4rem); margin: 0; line-height: 1; }
+  .sub { color: var(--muted); margin: 6px 0 18px; }
+  .sobre { position: relative; width: min(100%, 380px); cursor: pointer; perspective: 900px; }
+  .tarjeta {
+    position: relative; min-height: 230px; border-radius: 22px; padding: 26px 22px;
+    background: #fff; box-shadow: 0 12px 30px rgba(120, 60, 120, .18);
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    transition: transform .6s cubic-bezier(.3,1.3,.5,1);
+  }
+  .tarjeta::before { content: ""; position: absolute; inset: 10px; border: 2px dashed #f0c3d3; border-radius: 16px; pointer-events: none; }
+  .tapa .tarjeta { background: linear-gradient(135deg, #ff7aa2, #b98cff); color: #fff; }
+  .tapa .tarjeta::before { border-color: rgba(255,255,255,.55); }
+  .tapa .tarjeta:active { transform: scale(.97); }
+  .num { font-weight: 700; letter-spacing: 1px; font-size: .85rem; color: var(--muted); }
+  .tapa .num { color: #fff; opacity: .85; }
+  .preg { font-family: "Caveat", cursive; font-size: clamp(1.8rem, 7.5vw, 2.3rem); line-height: 1.1; }
+  .grande { font-size: 3rem; line-height: 1; }
+  .gira { animation: gira .6s ease; }
+  @keyframes gira { 0% { transform: rotateY(90deg); } 100% { transform: none; } }
+  .acciones { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 16px; }
+  .btn { font: inherit; font-weight: 700; padding: 12px 20px; border-radius: 999px; border: 0; cursor: pointer; text-decoration: none; display: inline-flex; gap: 8px; align-items: center; }
+  .btn.wa { background: var(--wa); color: #fff; box-shadow: 0 4px 12px rgba(37, 211, 102, .35); }
+  .btn.copiar { background: #fff; color: var(--ink); box-shadow: 0 4px 12px rgba(120, 60, 120, .12); }
+  .acciones[hidden] { display: none; }
+  .hint { color: var(--muted); margin: 14px 0 0; }
+  .cuenta { font-weight: 700; color: var(--red); }
+  .firma { font-family: "Caveat", cursive; color: var(--red); font-size: 1.6rem; margin: 6px 0 0; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+  <h1>Pregunta del día</h1>
+  <p class="sub" id="sub"></p>
+
+  <div class="sobre tapa" id="sobre" role="button" tabindex="0" aria-label="Abrir la pregunta del día">
+    <div class="tarjeta" id="tarjeta">
+      <div class="grande">💭</div>
+      <div class="preg">Tengo una pregunta para ti…</div>
+      <div class="num">TOCA PARA VERLA</div>
+    </div>
+  </div>
+
+  <div class="acciones" id="acciones" hidden>
+    <a class="btn wa" id="wa" target="_blank" rel="noopener">💬 Contestarme por WhatsApp</a>
+    <button class="btn copiar" id="copiar">📋 Copiar</button>
+  </div>
+  <p class="hint" id="hint"></p>
+  <p class="firma" id="firma"></p>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = 'Para conocerte un poquito más cada día, ' + NOMBRE + ' 💗';
+  $('firma').textContent = '— ' + FIRMA;
+
+  const ESPERA = 24 * 3600000;
+  const KEY = 'pregunta-estado';
+  let estado = null;   // { i: número de pregunta, t: cuándo la abrió }
+  try { estado = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch (e) {} };
+  const listoNuevo = () => !estado || Date.now() - estado.t >= ESPERA;
+
+  let abierta = false;
+  function abrir(animar) {
+    if (abierta && !listoNuevo()) return;
+    if (listoNuevo()) { estado = { i: estado ? estado.i + 1 : 0, t: Date.now() }; guardar(); }
+    abierta = true;
+    const q = PREGUNTAS[estado.i % PREGUNTAS.length];
+    $('sobre').classList.remove('tapa');
+    $('tarjeta').innerHTML = '<div class="num">PREGUNTA #' + (estado.i + 1) + '</div><div class="preg"></div>';
+    $('tarjeta').querySelector('.preg').textContent = q;
+    if (animar) { $('tarjeta').classList.remove('gira'); void $('tarjeta').offsetWidth; $('tarjeta').classList.add('gira'); }
+    const texto = 'Pregunta del día: ' + q + '\nMi respuesta: ';
+    $('wa').href = 'https://wa.me/' + WHATSAPP + '?text=' + encodeURIComponent(texto);
+    $('copiar').onclick = () => {
+      const listo = () => { $('copiar').textContent = '✅ Copiada'; setTimeout(() => $('copiar').textContent = '📋 Copiar', 1500); };
+      if (navigator.clipboard) navigator.clipboard.writeText(texto).then(listo, () => {});
+    };
+    $('acciones').hidden = false;
+    tick();
+  }
+
+  function tick() {
+    if (!abierta) { $('hint').textContent = ''; return; }
+    if (listoNuevo()) { $('hint').innerHTML = '¡Ya hay una pregunta nueva! <b class="cuenta">Toca la tarjeta</b> 💭'; abierta = false; return; }
+    const falta = estado.t + ESPERA - Date.now();
+    const h = Math.floor(falta / 3600000), m = Math.floor(falta / 60000) % 60, s = Math.floor(falta / 1000) % 60;
+    $('hint').innerHTML = 'Nueva pregunta en <span class="cuenta">' + h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + '</span>';
+  }
+
+  if (!listoNuevo()) abrir(false);
+  setInterval(tick, 1000);
+  $('sobre').addEventListener('click', () => abrir(true));
+  $('sobre').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrir(true); } });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>

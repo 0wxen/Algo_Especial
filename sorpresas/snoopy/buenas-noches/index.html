@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f1a3d">
+<title>Buenas noches, Snoopy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<script>
+  // ✏️ PERSONALIZA AQUÍ ----------------------------------------------
+  const NOMBRE = 'Carola';
+  const FIRMA = 'Owen';
+  const HORA_DESDE = 20;   // a partir de esta hora se puede abrir (20 = 8:00 pm)
+  const HORA_HASTA = 6;    // y hasta esta hora de la mañana (6 = 6:00 am)
+  // Un mensaje por noche, en este orden y sin repetir (cuando se acaban vuelven a empezar)
+  const MENSAJES = [
+    'Buenas noches, ' + NOMBRE + '. Ojalá sueñes bonito, y si salgo en tu sueño, mejor 😌',
+    'Ya descansa, doctora. Mañana vas a brillar otra vez ✨',
+    'Snoopy ya se durmió en su techo y dice que tú también deberías 🐶💤',
+    'Cierra los ojitos. Desde Durango te mando un abrazo que llega hasta Puebla 🤗',
+    'Hoy fue un día más; mañana es un día menos para vernos 🎄',
+    'Que descanses bonito. Eres lo último en lo que pienso antes de dormir 💗',
+    'Gracias por existir, de verdad. Buenas noches 🌙',
+    'Si hoy fue un día pesado, mañana lo hacemos mejor. Yo creo en ti.',
+    'Te dejo esta luna para que te cuide mientras duermes 🌙',
+    'Duerme rico. Mañana te espera un "buenos días" mío 😁',
+    'Snoopy, Woodstock y yo te deseamos dulces sueños 🐤🐶',
+    'La misma luna está sobre los dos. Buenas noches desde aquí 🌙💫',
+    'A dormir, que una futura dentista necesita energía para salvar sonrisas 🦷',
+    'Que sueñes con algo tan bonito como tu sonrisa ✨',
+    'Hoy también me gustaste mucho. Buenas noches 💗',
+    'Apaga el celular (después de leer esto 😜) y descansa.',
+    'Mañana será un gran día; tú haces que lo sea. Dulces sueños 🌟',
+    'Un besito de buenas noches, de esos que se mandan desde lejos 😘',
+    'Si no puedes dormir, cuenta Snoopys: 1 🐶, 2 🐶, 3 🐶…',
+    'Duerme tranquila, que aquí alguien te quiere mucho 💗',
+    'Buenas noches a la persona más bonita de Puebla 🌙',
+    'Respira hondo, suelta el día y descansa. Lo hiciste bien.',
+    'Gracias por el día de hoy, aunque sea a distancia 💌',
+    'Que el sueño te abrace mientras llego yo en diciembre 🤗🎄',
+    'Snoopy roncó y me pidió que te dijera que sueñes bonito 😴',
+    'Eres mi parte favorita del día, y también de la noche ✨',
+    'Hasta mañana, doctora. Te quiero 💗',
+    'Que sueñes con carreras ganadas, goles y conciertos de The Weeknd 🏎️⚽🎤',
+    'Cuando cierres los ojos, piensa que falta menos para vernos.',
+    'Buenas noches. No olvides que eres increíble 🌙💗',
+  ];
+  // -------------------------------------------------------------------
+</script>
+<style>
+  :root { --cielo1: #0b1433; --cielo2: #2b2f6b; --ink: #2b2a33; --red: #d7263d; --luz: #ffe9a8; --txt: #e9ecff; --muted: #aab1d6; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; }
+  body {
+    background: linear-gradient(180deg, var(--cielo1), var(--cielo2)); background-attachment: fixed;
+    color: var(--txt); font-family: "Quicksand", system-ui, sans-serif;
+    min-height: 100vh; min-height: 100dvh; overflow-x: hidden;
+    display: flex; flex-direction: column; align-items: center; text-align: center;
+    padding: max(52px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+    transition: background .6s;
+  }
+  body.dia { --cielo1: #8fc3ef; --cielo2: #ffd9c2; --txt: #2b2a33; --muted: #5d5a6e; }
+  .estrellas { position: fixed; inset: 0; pointer-events: none; }
+  .estrellas i { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; animation: brilla ease-in-out infinite alternate; }
+  .dia .estrellas { display: none; }
+  @keyframes brilla { from { opacity: .15; } to { opacity: 1; } }
+  .luna { position: fixed; top: max(60px, calc(env(safe-area-inset-top) + 40px)); right: 8vw; width: 64px; height: 64px; border-radius: 50%;
+    box-shadow: inset -14px 6px 0 0 var(--luz); filter: drop-shadow(0 0 14px rgba(255, 233, 168, .6)); transform: rotate(-20deg); }
+  .dia .luna { box-shadow: none; background: #ffd34d; filter: drop-shadow(0 0 22px rgba(255, 211, 77, .9)); }
+  h1 { position: relative; font-family: "Caveat", cursive; color: var(--luz); font-size: clamp(2.4rem, 10vw, 3.2rem); margin: 0; line-height: 1; }
+  .dia h1 { color: var(--red); }
+  .sub { position: relative; color: var(--muted); margin: 6px 0 4px; }
+  .bubble {
+    position: relative; width: min(100%, 360px); min-height: 80px; margin-top: 12px;
+    background: #fff; color: var(--ink); border: 3px solid #1d1d1f; border-radius: 18px; padding: 12px 16px;
+    font-family: "Caveat", cursive; font-size: clamp(1.4rem, 5.5vw, 1.7rem); line-height: 1.2;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: scale(.85); transition: opacity .35s, transform .4s cubic-bezier(.2,1.5,.4,1);
+  }
+  .bubble.show { opacity: 1; transform: none; }
+  .bubble::after { content: ""; position: absolute; left: 62%; bottom: -20px; border: 10px solid transparent; border-top-color: #1d1d1f; }
+  .stage { position: relative; width: min(92vw, 380px); margin-top: 8px; cursor: pointer; }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .zzz text { font-family: "Caveat", cursive; font-weight: 700; fill: var(--luz); animation: zzz 3s ease-in infinite; opacity: 0; }
+  .dia .zzz text { fill: #5d5a6e; }
+  .zzz text:nth-child(2) { animation-delay: 1s; } .zzz text:nth-child(3) { animation-delay: 2s; }
+  @keyframes zzz { 0% { opacity: 0; transform: translate(0, 0); } 25% { opacity: 1; } 100% { opacity: 0; transform: translate(26px, -50px); } }
+  #panza { animation: respira 3s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+  @keyframes respira { 50% { transform: scaleY(1.07); } }
+  .hint { position: relative; color: var(--muted); margin: 6px 0 0; }
+  .cuenta { font-weight: 700; color: var(--luz); }
+  .dia .cuenta { color: var(--red); }
+  .firma { position: relative; font-family: "Caveat", cursive; color: var(--luz); font-size: 1.6rem; margin: 4px 0 0; opacity: 0; transition: opacity .5s; }
+  .firma.show { opacity: 1; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } .zzz text { opacity: 1; } }
+</style>
+</head>
+<body>
+  <div class="estrellas" id="estrellas" aria-hidden="true"></div>
+  <div class="luna" aria-hidden="true"></div>
+  <h1>Buenas noches</h1>
+  <p class="sub" id="sub"></p>
+  <div class="bubble" id="bubble"></div>
+
+  <div class="stage" id="stage" role="button" tabindex="0" aria-label="Tocar la casita de Snoopy">
+    <svg viewBox="0 -70 300 330" aria-hidden="true">
+      <!-- pasto -->
+      <ellipse cx="150" cy="246" rx="170" ry="22" fill="#2f6b3a"/>
+      <!-- casita -->
+      <rect x="62" y="110" width="176" height="130" fill="var(--red)" stroke="#1d1d1f" stroke-width="4"/>
+      <path d="M70 140 H230 M70 170 H230 M70 200 H230" stroke="#a81a2d" stroke-width="2" opacity=".6"/>
+      <path d="M118 240 V178 A32 32 0 0 1 182 178 V240 Z" fill="#1d1d1f"/>
+      <path d="M48 124 L150 46 L252 124" fill="none" stroke="#1d1d1f" stroke-width="16" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M48 124 L150 46 L252 124" fill="none" stroke="#3b3b45" stroke-width="10" stroke-linejoin="round" stroke-linecap="round"/>
+      <path d="M66 118 L150 54 L234 118 Z" fill="var(--red)"/>
+      <rect x="128" y="88" width="44" height="16" rx="3" fill="#fff" stroke="#1d1d1f" stroke-width="2"/>
+      <text x="150" y="100" text-anchor="middle" font-family="Quicksand, sans-serif" font-weight="700" font-size="10" fill="#1d1d1f">SNOOPY</text>
+
+      <!-- Snoopy dormido boca arriba sobre el techo -->
+      <g id="snoopy">
+        <!-- cola -->
+        <path d="M100 30 Q90 26 88 16" fill="none" stroke="#1d1d1f" stroke-width="7" stroke-linecap="round"/>
+        <path d="M100 30 Q90 26 88 16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+        <!-- patitas hacia arriba -->
+        <ellipse cx="114" cy="12" rx="7" ry="12" fill="#fff" stroke="#1d1d1f" stroke-width="3" transform="rotate(-12 114 12)"/>
+        <ellipse cx="132" cy="10" rx="7" ry="12" fill="#fff" stroke="#1d1d1f" stroke-width="3" transform="rotate(8 132 10)"/>
+        <!-- panza -->
+        <g id="panza">
+          <path d="M98 44 C96 28 112 18 140 18 C164 18 178 26 180 40 C181 46 176 48 170 48 L104 48 C100 48 98 47 98 44 Z" fill="#fff" stroke="#1d1d1f" stroke-width="3" stroke-linejoin="round"/>
+        </g>
+        <!-- bracito sobre la panza -->
+        <path d="M150 34 Q160 26 170 30" fill="none" stroke="#1d1d1f" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- oreja colgando -->
+        <path d="M184 30 C176 36 172 52 178 62 C184 70 194 64 194 54 C194 44 192 36 188 30 Z" fill="#1d1d1f"/>
+        <!-- cabeza y hocico apuntando arriba -->
+        <path d="M176 40 C172 24 184 14 198 14 C204 6 214 -6 224 -4 C234 -2 234 8 228 16 C222 24 216 34 210 42 C200 50 182 50 176 40 Z" fill="#fff" stroke="#1d1d1f" stroke-width="3" stroke-linejoin="round"/>
+        <ellipse cx="227" cy="-2" rx="7" ry="6" fill="#1d1d1f" transform="rotate(-30 227 -2)"/>
+        <!-- ojo cerrado y cachete -->
+        <path d="M192 26 Q197 31 202 26" fill="none" stroke="#1d1d1f" stroke-width="2.6" stroke-linecap="round"/>
+        <ellipse cx="206" cy="34" rx="6" ry="3.5" fill="#ff9db5" opacity=".7"/>
+        <path d="M212 26 Q218 24 222 18" fill="none" stroke="#1d1d1f" stroke-width="2" stroke-linecap="round"/>
+      </g>
+      <g class="zzz">
+        <text x="206" y="-16" font-size="20">z</text>
+        <text x="206" y="-16" font-size="26">z</text>
+        <text x="206" y="-16" font-size="32">Z</text>
+      </g>
+    </svg>
+  </div>
+  <p class="hint" id="hint"></p>
+  <p class="firma" id="firma"></p>
+
+<script>
+  const $ = id => document.getElementById(id);
+  $('sub').textContent = 'Para ' + NOMBRE + ' · un mensaje cada noche';
+  $('firma').textContent = '— ' + FIRMA;
+
+  // estrellitas de fondo
+  const est = $('estrellas');
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('i');
+    s.style.left = Math.random() * 100 + '%'; s.style.top = Math.random() * 70 + '%';
+    const t = Math.random() < .2 ? 3 : 2; s.style.width = s.style.height = t + 'px';
+    s.style.animationDuration = (1.5 + Math.random() * 3) + 's'; s.style.animationDelay = (Math.random() * 3) + 's';
+    est.appendChild(s);
+  }
+
+  const KEY = 'buenas-noches-estado';
+  let estado = null;   // { i: número de mensaje, noche: 'AAAA-M-D' de la noche en que lo abrió }
+  try { estado = JSON.parse(localStorage.getItem(KEY)); } catch (e) {}
+  const guardar = () => { try { localStorage.setItem(KEY, JSON.stringify(estado)); } catch (e) {} };
+
+  const esNoche = () => { const h = new Date().getHours(); return h >= HORA_DESDE || h < HORA_HASTA; };
+  // La "noche" se cuenta por la fecha en que empezó (la 1:00 am sigue siendo la noche de ayer)
+  function nocheDeHoy() {
+    const d = new Date();
+    if (d.getHours() < HORA_HASTA) d.setDate(d.getDate() - 1);
+    return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  }
+  const hora12 = h => (h % 12 || 12) + ':00 ' + (h < 12 ? 'am' : 'pm');
+
+  const bubble = $('bubble'), hint = $('hint');
+  let abierto = false;
+
+  function mostrar(texto, firma) {
+    bubble.classList.remove('show'); void bubble.offsetWidth;
+    bubble.textContent = texto;
+    bubble.classList.add('show');
+    $('firma').classList.toggle('show', !!firma);
+  }
+
+  function tocar() {
+    if (!esNoche()) {
+      mostrar('Shhh… Snoopy está guardando tu mensaje para la noche 🌙');
+      return;
+    }
+    const noche = nocheDeHoy();
+    if (!estado || estado.noche !== noche) {
+      estado = { i: estado ? estado.i + 1 : 0, noche };
+      guardar();
+    }
+    abierto = true;
+    mostrar(MENSAJES[estado.i % MENSAJES.length], true);
+    tick();
+  }
+
+  function tick() {
+    const noche = esNoche();
+    document.body.classList.toggle('dia', !noche);
+    if (!noche) {
+      const ahora = new Date(), abre = new Date(ahora);
+      abre.setHours(HORA_DESDE, 0, 0, 0);
+      const falta = Math.max(0, abre - ahora);
+      const h = Math.floor(falta / 3600000), m = Math.floor(falta / 60000) % 60, s = Math.floor(falta / 1000) % 60;
+      hint.innerHTML = 'Se abre a las ' + hora12(HORA_DESDE) + ' · faltan <span class="cuenta">' + h + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0') + '</span>';
+      if (abierto) { abierto = false; bubble.classList.remove('show'); $('firma').classList.remove('show'); }
+    } else if (!abierto) {
+      hint.textContent = 'Toca la casita para que Snoopy te dé las buenas noches 🌙';
+    } else {
+      hint.textContent = 'Mañana en la noche hay otro mensajito 💤';
+    }
+  }
+
+  // Si ya lo abrió esta noche, se queda el mismo mensaje
+  if (esNoche() && estado && estado.noche === nocheDeHoy()) tocar();
+  tick();
+  setInterval(tick, 1000);
+  $('stage').addEventListener('click', tocar);
+  $('stage').addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); tocar(); } });
+</script>
+<a class="volver-menu" href="../../index.html" style="position:fixed;top:max(10px,env(safe-area-inset-top));left:10px;z-index:50;background:rgba(255,255,255,.88);color:#4a2b33;text-decoration:none;font:700 13px/1 system-ui,-apple-system,sans-serif;padding:8px 12px;border-radius:999px;box-shadow:0 2px 8px rgba(0,0,0,.18)">← Menú</a>
+</body>
+</html>
